@@ -200,7 +200,7 @@
 	\section{SSH Manager}
 	\subsection[file config]{Umgebung Konfigurieren}
 	
-	Kopieren von 'requirements.txt', '.env.example', 'initialise.sh', 'routine.sh', 'setup.sh', 'main.py', 'ssh-manager.service.example', 'ssh-manager-schedule.timer.example' in beliebigen Ordner 
+	Kopieren von 'requirements.txt', '.env.example', 'initialise.sh', 'routine.sh', 'setup.sh', 'main.py', 'ssh-manager.service.example', 'ssh-manager-schedule.timer.example' in den selben beliebigen Ordner 
 	
 	\lstset{style=files}
 	\begin{lstlisting}[caption={Anhand von '.env.example' eigene '.env' Datei anlegen}, language=bash]
@@ -222,8 +222,13 @@
 		POSTGRES_DB=mydb
 		POSTGRES_USER=admin
 		POSTGRES_PASS=password
+		
+		#paths are configured by running 'setup.sh'
+		CONFIGPATH="/thats/where/i/store/my/configs"
+		MAINPATH="/the/path/to/main.py"
 	\end{lstlisting}
 	
+	\newpage
 	\subsubsection{1 - Mit Setup script}
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Ausführen des setup Scripts}]
@@ -233,11 +238,13 @@
 		Do you want to proceed? (y/n) y
 		we will proceed
 		
-		Where do you want the config to be stored: /my/sample/path
+		Where do you want the config to be stored: (abolut path) /my/sample/path
+		Where is the 'main.py' file stored: (abolut path) /path/to/main.py
 		
-		Do you want to store the config files at "/my/sample/path"? (y/n/exit) y
+		Do you want to store the config files at "/my/sample/path"? 
+		Is your 'main.py' stored at "/path/to/main" (y/n/exit) y
 		
-		The path has been set to "/my/sample/path"!
+		The paths have been set!
 		
 		Do you want to configure the systemd Service? (y/n/exit) y
 		
@@ -249,49 +256,24 @@
 		
 		...
 		
-		finished setup:
-		1. /my/sample/path
-		2. /ssh-manager/src
+		finished setup
+		
 		elbrus@server:~/ssh-manager/src$
 	\end{lstlisting}
 	
+	\newpage
 	\subsubsection{2 - Ohne Setup script}
 	\lstset{style=files}
-	\begin{lstlisting}[caption={initialise.sh - Die Variable 'DIR'}, language=bash, keywords={DIR}, keywordstyle=\color{red}, firstnumber=2]
+	\begin{lstlisting}[caption={'.env' - Datei anpassen}, language=bash, keywords={CONFIGPATH, MAINPATH}, keywordstyle=\color{red}, firstnumber=17]
 		...
+		POSTGRES_PASS=password
 		
-		#directory in which the config is stored
-		DIR="/home/elbrus/Desktop/ssh-manager/config"
-		
-		if [ -d "$DIR" ]; then
-		...
+		#paths are configured by running 'setup.sh'
+		CONFIGPATH="/thats/where/i/store/my/configs"
+		MAINPATH="/the/path/to/main.py"
 	\end{lstlisting}
 
-	\begin{lstlisting}[caption={routine.sh - Die Variable 'DIR', Den Pfad zum python Script}, language=bash, keywords={DIR, python3}, keywordstyle=\color{red}, firstnumber=3]
-		...
-		
-		#directory in which the config is stored
-		DIR="/home/elbrus/Desktop/ssh-manager/config"
-		
-		echo "info: retrieving configurations"
-		#execute python job
-		python3 /home/elbrus/Desktop/ssh-manager/src/main.py
-		
-		#set current date in the Format YYYY-MM-DD-HH:MM:SS
-		...
-	\end{lstlisting}
-
-	\begin{lstlisting}[caption={main.py - Die Variable 'directory'}, language=python, keywords={directory}, keywordstyle=\color{red}, firstnumber=11]
-		...
-		
-		#directory in which the output is stored
-		directory = '/home/elbrus/Desktop/ssh-manager/config/'
-		#address of current endpoint
-		address = None
-		...
-	\end{lstlisting}
-
-	\begin{lstlisting}[caption={ssh-manager.service.example - Die Variable 'WorkingDirectory', Die Variable 'User'},language=bash ,keywords={WorkingDirectory, User}, keywordstyle=\color{red}, firstnumber=5]
+	\begin{lstlisting}[caption={ssh-manager.service.example - Die Variable 'WorkingDirectory' sowie die Variable 'User' anpassen.},language=bash ,keywords={WorkingDirectory, User}, keywordstyle=\color{red}, firstnumber=5]
 		...
 		#job is starting immediatly after the start action has been called
 		Type=simple
@@ -314,13 +296,8 @@
 		elbrus@server:~$ pip3 install -r ssh-manager/requirements.txt
 	\end{lstlisting}
 
-
+	\newpage
 	\subsection[systemd service]{Automatisches ausführen des Skripts}
-	\begin{itemize}
-		\item In 'ssh-manager.service.example' den Pfad des Arbeitsverzeichnisses ändern
-		\item Den Benutzer in 'ssh-manager.service.example' ändern
-	\end{itemize}
-
 	\begin{lstlisting}[caption={Kopieren des Serviceprogrammes}]
 		elbrus@server:~$ cp src/ssh-manager.service.example \
 		 /etc/systemd/system/ssh-manager.service
