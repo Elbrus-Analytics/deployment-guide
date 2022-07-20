@@ -1,0 +1,361 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+%%FOR CODES
+\usepackage{listings,lstautogobble}
+\usepackage{xcolor}
+\usepackage{caption}
+
+%%COLORES
+\definecolor{realylightgray}{gray}{0.95}
+\definecolor{RoyalBlue}{cmyk}{1, 0.50, 0, 0}
+\definecolor{capri}{rgb}{0.0, 0.75, 1.0}
+\definecolor{ceruleanblue}{rgb}{0.16, 0.32, 0.75}
+\definecolor{cobalt}{rgb}{0.0, 0.28, 0.67}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+
+\lstset{
+	showstringspaces=false,
+	showtabs=false,
+	showspaces=false,
+	stringstyle=\ttfamily,
+	frameround=ffff,
+	frame=single,
+	framextopmargin=4pt,
+	framexbottommargin=4pt,
+	rulecolor=\color{darkgray},
+	gobble=12, %align text inside box left <-> right
+	belowskip=2em,
+	keepspaces=true
+}
+
+%%template for commands
+\lstdefinestyle{commands}{
+	basicstyle=\scriptsize\ttfamily,
+	commentstyle=\ttfamily\itshape\color{gray},
+	backgroundcolor=\color{realylightgray},
+	keywords=[1]{elbrus@server},
+	keywordstyle=[1]\color{cobalt},
+	numbers=none,
+	breaklines=false
+}
+
+%%template for files
+\lstdefinestyle{files}{
+	basicstyle=\ttfamily\footnotesize,
+	commentstyle=\color{codegreen},
+	backgroundcolor=\color{realylightgray},    
+	deletekeywords=[1]{elbrus@server},                                       
+	numbers=left,       
+	numbersep=5pt,
+	breaklines=true,                                                 
+}
+
+\captionsetup[lstlisting]{singlelinecheck=false, } %to align caption left
+\lstset{style=commands}
+
+\begin{document}
+	\title{Elbrus Analytics - Bereitstellungshandbuch}
+	\author{Tobias Schmidt}
+	\date{\today}
+	\maketitle
+	\newpage
+	
+	\section[Server Infrastruktur]{Server Infrastruktur}
+	\subsection{Initiale Server Konfiguration}
+	
+	\begin{lstlisting}[caption={Installieren des DNF Konfigurations Managers, um in Folge das Remote Docker Repository hinzuzufügen.}]
+		elbrus@server:~$ dnf install dnf-plugin-config-manager
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Installieren und aktivieren von Docker.}]
+		elbrus@server:~$ sudo dnf config-manager \
+		 --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+		
+		elbrus@server:~$ sudo dnf install docker-ce docker-ce-cli containerd.io
+		
+		elbrus@server:~$ systemctl enable docker
+		
+		elbrus@server:~$ systemctl start docker
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Berechtigt den User Elbrus 'sudo' zu verwenden. Berechtigt den User Elbrus darüber hinaus Docker ohne 'sudo' aufzurufen. Zudem wird dem User ein Heimverzeichnis angelegt, sowie die 'Bash' als standard Konsole gesetzt.}]
+		elbrus@server:~$ useradd -s /bin/bash -G docker,wheel -m elbrus
+		
+		elbrus@server:~$ passwd elbrus
+		Changing password for user elbrus.
+		New password:
+		Retype new password:
+		passwd: all authentication tokens updated successfully.
+		elbrus@server:~$
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Setzen der Zeitzone auf 'Europa/Wien'.}]
+		elbrus@server:~$ sudo timedatectl set-timezone Europe/Vienna
+	\end{lstlisting}
+
+	\subsection{python}
+	\subsection{rust}
+	\newpage
+
+	% --------- DATENBANK ---------
+	\section{Datenbank}
+	\newpage
+	
+	% --------- CAPTURE ---------
+	\section{Aufzeichnen der Daten}
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Installieren von 'tcpdump' für das aufzeichnen von Daten.}]
+		elbrus@server:~$ sudo dnf install tcpdump
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Anlegen eines Users der Berechtigungen zum ausführen von 'tcpdump' erhält.}]
+		elbrus@server:~$ sudo useradd aragog
+	\end{lstlisting}
+	
+	\begin{lstlisting}[caption={Zuweisen von 'tcpdump' zu der Gruppe 'aragog'.}]
+		elbrus@server:~$ sudo chgrp aragog /usr/sbin/tcpdump
+	\end{lstlisting}
+	
+	\begin{lstlisting}[caption={Ändern der Berechtigungen auf 'tcpdump'.}]
+		elbrus@server:~$ chmod 750 /usr/sbin/tcpdump
+		elbrus@server:~$ sudo setcap cap_net_raw,cap_net_admin=eip \
+		/usr/sbin/tcpdump
+	\end{lstlisting}
+
+	Kopieren von '.env.example', 'capture.service.example', 'elb-capture.sh', 'elb-capture-log.sh', 'elb-capture-postrotate.sh' in beliebigen Ordner 
+
+	\lstset{style=files}
+	\begin{lstlisting}[caption={Anhand von '.env.example' eigene '.env' Datei anlegen}, language=bash]
+		#where the log should be stored
+		LOGFILE="/var/elbrus/capture/capture.log"
+		#where the traces should be stored
+		PCAP="/var/elbrus/capture/pcap/"
+		#how much time each trace should contain in seconds
+		TIMEPERCAPTURE=900
+		#the maximum amount of files
+		MAXFILES=10
+		#the interface to capture on
+		INTERFACE=eth0
+		#the path to the 'elb-capture-postrotate.sh' script
+		POSTROTATEPATH=/var/elbrus/capture/elb-capture-postrotate.sh
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={capture.service.example - Die Variable 'WorkingDirectory', Die Variable 'User' sowie die Variable 'ExecStopPost' anpassen.},language=bash ,keywords={WorkingDirectory, User, ExecStopPost}, keywordstyle=\color{red}, firstnumber=3]
+		...
+		#job is starting immediatly after the start action has been called
+		Type=simple
+		#the user to execute the script
+		User=aragog
+		#the working directory
+		WorkingDirectory=/var/elbrus/capture
+		#which script should be executed
+		ExecStart=/bin/bash elb-capture.sh
+		#when the script should restart
+		Restart=on-failure
+		#set the restart timeout
+		RestartSec=5
+		#which script should be executed when the service stops
+		ExecStopPost=/bin/bash elb-capture-log.sh
+		
+		[Install]
+		...
+	\end{lstlisting}
+	
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Kopieren des Serviceprogrammes}]
+		elbrus@server:~$ cp capture.service.example \
+		 /etc/systemd/system/capture.service
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Neuladen des 'systemctl' Deamons}]
+		elbrus@server:~$ systemctl daemon-reload
+	\end{lstlisting}
+	
+	\begin{lstlisting}[caption={Aktivieren des Serviceprogrammes}]
+		elbrus@server:~$ systemctl enable capture.service
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Starten des Serviceprogrammes}]
+		elbrus@server:~$ systemctl start capture.service
+	\end{lstlisting}
+	
+	\newpage
+	
+	
+	% --------- PACKET CAPTURE IMPORTER ---------
+	\section{Packet Capture Importer}
+	\newpage
+	
+	% --------- REPORT GENERATOR ---------
+	\section{Report Generator}
+	\newpage
+	
+	% --------- SNMP MANAGER ---------
+	\section{SNMP Manager}
+	\newpage
+	
+	% --------- SSH MANAGER ---------
+	\section{SSH Manager}
+	\subsection[file config]{Umgebung Konfigurieren}
+	
+	Kopieren von 'requirements.txt', '.env.example', 'initialise.sh', 'routine.sh', 'setup.sh', 'main.py', 'ssh-manager.service.example', 'ssh-manager-schedule.timer.example' in beliebigen Ordner 
+	
+	\lstset{style=files}
+	\begin{lstlisting}[caption={Anhand von '.env.example' eigene '.env' Datei anlegen}, language=bash]
+		#values regarding the jumpserver:
+		#IP, PORT and USER values must be set!
+		#depending on the usage you can set either:
+		#   -PASS and KEYFILE: the keyfile is used, the pass is interpreted as the passphrase
+		#   -only KEYFILE: the keyfile is used
+		#   -only PASS: the password is used as is regular credentials
+		JUMPSERVER_IP="2.2.2.15"
+		JUMPSERVER_PORT=22
+		JUMPSERVER_USER=admin
+		JUMPSERVER_PASS=password
+		SSH_KEYFILE='my/sample/path'
+		
+		#all database values must be set!
+		POSTGRES_HOST="192.168.0.1"
+		POSTGRES_PORT=245
+		POSTGRES_DB=mydb
+		POSTGRES_USER=admin
+		POSTGRES_PASS=password
+	\end{lstlisting}
+	
+	\subsubsection{1 - Mit Setup script}
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Ausführen des setup Scripts}]
+		elbrus@server:~$ cd ssh-manager/src
+		elbrus@server:~/ssh-manager/src$ ./setup.sh
+		Setup for ssh-manager
+		Do you want to proceed? (y/n) y
+		we will proceed
+		
+		Where do you want the config to be stored: /my/sample/path
+		
+		Do you want to store the config files at "/my/sample/path"? (y/n/exit) y
+		
+		The path has been set to "/my/sample/path"!
+		
+		Do you want to configure the systemd Service? (y/n/exit) y
+		
+		Which User should execute the Service? elbrus
+		
+		The systemd Service has been configured!
+		
+		Do you want to run the initialise script? (y/n/exit) y
+		
+		...
+		
+		finished setup:
+		1. /my/sample/path
+		2. /ssh-manager/src
+		elbrus@server:~/ssh-manager/src$
+	\end{lstlisting}
+	
+	\subsubsection{2 - Ohne Setup script}
+	\lstset{style=files}
+	\begin{lstlisting}[caption={initialise.sh - Die Variable 'DIR'}, language=bash, keywords={DIR}, keywordstyle=\color{red}, firstnumber=2]
+		...
+		
+		#directory in which the config is stored
+		DIR="/home/elbrus/Desktop/ssh-manager/config"
+		
+		if [ -d "$DIR" ]; then
+		...
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={routine.sh - Die Variable 'DIR', Den Pfad zum python Script}, language=bash, keywords={DIR, python3}, keywordstyle=\color{red}, firstnumber=3]
+		...
+		
+		#directory in which the config is stored
+		DIR="/home/elbrus/Desktop/ssh-manager/config"
+		
+		echo "info: retrieving configurations"
+		#execute python job
+		python3 /home/elbrus/Desktop/ssh-manager/src/main.py
+		
+		#set current date in the Format YYYY-MM-DD-HH:MM:SS
+		...
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={main.py - Die Variable 'directory'}, language=python, keywords={directory}, keywordstyle=\color{red}, firstnumber=11]
+		...
+		
+		#directory in which the output is stored
+		directory = '/home/elbrus/Desktop/ssh-manager/config/'
+		#address of current endpoint
+		address = None
+		...
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={ssh-manager.service.example - Die Variable 'WorkingDirectory', Die Variable 'User'},language=bash ,keywords={WorkingDirectory, User}, keywordstyle=\color{red}, firstnumber=5]
+		...
+		#job is starting immediatly after the start action has been called
+		Type=simple
+		#the user to execute the script
+		User=elbrus
+		#the working directory
+		WorkingDirectory=/home/elbrus/Desktop/ssh-manager/src/
+		#which script should be executed
+		ExecStart=/bin/bash routine.sh
+		...
+	\end{lstlisting}
+
+	\lstset{style=commands}	
+	\begin{lstlisting}[caption={Ausführen des Scripts zur Initialisierung des VCS Verzeichnisses.}]
+		elbrus@server:~$ ssh-manager/src/initialise.sh
+	\end{lstlisting}
+
+	\subsection[init commands]{Abhängigkeiten}
+	\begin{lstlisting}[caption={Installieren von fehlenden python3 Packages.}]
+		elbrus@server:~$ pip3 install -r ssh-manager/requirements.txt
+	\end{lstlisting}
+
+
+	\subsection[systemd service]{Automatisches ausführen des Skripts}
+	\begin{itemize}
+		\item In 'ssh-manager.service.example' den Pfad des Arbeitsverzeichnisses ändern
+		\item Den Benutzer in 'ssh-manager.service.example' ändern
+	\end{itemize}
+
+	\begin{lstlisting}[caption={Kopieren des Serviceprogrammes}]
+		elbrus@server:~$ cp src/ssh-manager.service.example \
+		 /etc/systemd/system/ssh-manager.service
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Kopieren des Zeitplanungsprogrammes.}]
+		elbrus@server:~$ cp src/ssh-manager-schedule.timer.example \
+		 /etc/systemd/system/ssh-manager-schedule.timer
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Neuladen des 'systemctl' Deamons}]
+		elbrus@server:~$ systemctl daemon-reload
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Aktivieren des Serviceprogrammes}]
+		elbrus@server:~$ systemctl enable ssh-manager.service
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Aktivieren des Zeitplanungsprogrammes}]
+		elbrus@server:~$ systemctl enable ssh-manager-schedule.timer
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Aktivieren des Zeitplanungsprogrammes}]
+		elbrus@server:~$ systemctl enable ssh-manager-schedule.timer
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Starten des Zeitplanungsprogrammes}]
+		elbrus@server:~$ systemctl start ssh-manager-schedule.timer
+	\end{lstlisting}
+	\newpage
+	
+	% --------- API ---------
+	\section{API}
+	\newpage
+	
+	\section{Webinterface}
+	\newpage
+\end{document}
