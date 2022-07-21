@@ -10,9 +10,11 @@
 \definecolor{realylightgray}{gray}{0.95}
 \definecolor{RoyalBlue}{cmyk}{1, 0.50, 0, 0}
 \definecolor{capri}{rgb}{0.0, 0.75, 1.0}
-\definecolor{ceruleanblue}{rgb}{0.16, 0.32, 0.75}
+\definecolor{deepskyblue}{rgb}{0.0, 0.75, 1.0}
 \definecolor{cobalt}{rgb}{0.0, 0.28, 0.67}
 \definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{amber}{rgb}{1.0, 0.49, 0.0}
+\definecolor{darkorchid}{rgb}{0.6, 0.2, 0.8}
 
 \lstset{
 	showstringspaces=false,
@@ -26,7 +28,8 @@
 	rulecolor=\color{darkgray},
 	gobble=12, %align text inside box left <-> right
 	belowskip=2em,
-	keepspaces=true
+	keepspaces=true,
+	escapeinside={<@}{@>}
 }
 
 %%template for commands
@@ -100,10 +103,112 @@
 
 	% --------- DATENBANK ---------
 	\section{Datenbank}
+	\subsection[dependencies]{Voraussetzungen}
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Hinzufügen des PostgreSQL Drittanbieter-Repository, um die neuesten PostgreSQL-Pakete zu erhalten.}]
+		elbrus@server:~$ sudo yum install \
+		 https://download.postgresql.org/pub/repos/yum/reporpms/ \
+		 EL-$(rpm -E %{rhel})-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+	\end{lstlisting}
+	
+	\begin{lstlisting}[caption={Erstellen des Timescale repository.}]
+		elbrus@server:~$ sudo tee /etc/yum.repos.d/timescale_timescaledb.repo
+	\end{lstlisting}
+
+	\lstset{style=files}
+	\begin{lstlisting}[caption={Berarbeiten des Timescale repository.},keywords={name, baseurl, repo\_gpgcheck, enabled, sslverify, sslcacert, metadata\_expire}, keywordstyle=\color{deepskyblue}]
+		<@\textcolor{deepskyblue}{[timescale\_timescaledb]}@>
+		name=timescale_timescaledb
+		baseurl=https://packagecloud.io/timescale/timescaledb/el/$(rpm -E %{rhel})/\$basearch
+		repo_gpgcheck=1
+		gpgcheck=0
+		enabled=1
+		<@\textcolor{deepskyblue}{gpgkey}@>=https://packagecloud.io/timescale/timescaledb/gpgkey
+		sslverify=1
+		sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+		metadata_expire=300
+	\end{lstlisting}
+
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Updaten der lokalen Package-Liste.}]
+		elbrus@server:~$ sudo yum update
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Installieren von TimescaleDB}]
+		elbrus@server:~$ sudo dnf -qy module disable postgresql
+		elbrus@server:~$ sudo dnf install postgresql14 postgresql14-server -y
+		elbrus@server:~$ sudo dnf install timescaledb-2-postgresql-14 -y
+	\end{lstlisting}
+	
+	\newpage
+	\subsection[TimescaleDB konfigurieren]{Umgebung Konfigurieren}
+	\begin{lstlisting}[caption={Initialisieren der Datenbank.}]
+		elbrus@server:~$ /usr/pgsql-14/bin/postgresql-14-setup initdb
+	\end{lstlisting}
+	
+	\begin{lstlisting}[caption={Verknüpfen von 'postgresql' Serive Start mit Serverstart sowie den Service starten.}]
+		elbrus@server:~$ sudo systemctl enable postgresql-14
+		elbrus@server:~$ sudo systemctl start postgresql-14
+	\end{lstlisting}
+
+	\lstset{style=files}
+	\begin{lstlisting}[caption={var/lib/pgsql/14/data/postgresql.conf - Ändern der folgenden Zeilen}, numbers=none]
+		<@\textcolor{red}{- \#shared\_preload\_libraries = ''}@>
+		<@\textcolor{codegreen}{+ shared\_preload\_libraries = 'timescaledb'}@>
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Anpassen der Datenbank Einstellungen auf die Server Hardware.}]
+		elbrus@server:~$ sudo timescaledb-tune --pg-config=/usr/ \
+		 pgsql-14/bin/pg_config --yes
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Neustarten des Services um Änderungen zu übernehmen.}]
+		elbrus@server:~$ sudo systemctl restart postgresql-14
+	\end{lstlisting}
+
+	\newpage
+	\subsection{Erstellen der Elbrus-Datenbank}
+	\begin{lstlisting}[caption={Verbinden mit dem interaktiven Terminal von 'postgres'.}]
+		elbrus@server:~$ sudo su postgres -c psql
+	\end{lstlisting}
+
+	Im folgenden Text sind markierte Abschnitte Variablen, welche im darunterliegen SQL gerändert werden können, was aus Sichertsgründen dringend empfohlen wird.
+	\begin{enumerate}
+		\item Die Datenbank elbrus anlegen
+		\item Die Zeitzone auf Europe/Vienna setzen
+		\item Den User elbrus mit dem Passwort elbrus123! anlegen
+		\item Dem User alle rechte auf die voher erstellte Datenbank geben
+	\end{enumerate}	
+
+	\lstset{style=files}
+	\begin{lstlisting}[caption={Auführen von SQL Befehlen.}, numbers=none]
+		<@\textcolor{amber}{CREATE DATABASE}@> <@\textcolor{darkorchid}{ elbrus}@>;
+		<@\textcolor{amber}{ALTER DATABASE}@> elbrus <@\textcolor{amber}{SET}@> timezone TO <@\textcolor{deepskyblue}{'Europe/Vienna'}@>;
+		<@\textcolor{amber}{CREATE USER}@> <@\textcolor{darkorchid}{ elbrus}@> PASSWORD <@\textcolor{deepskyblue}{'elbrus123!'}@>;
+		<@\textcolor{amber}{GRANT}@> ALL <@\textcolor{amber}{ON}@> DATABASE elbrus TO elbrus;
+	\end{lstlisting}
+	
+	\begin{lstlisting}[caption={Wechseln zu erstellter Datenbank}, numbers=none]
+		\c elbrus
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Hinzufügen der TimescaleDB Erweiterung.}, numbers=none]
+		<@\textcolor{amber}{CREATE EXTENSION IF NOT EXISTS}@> timescaledb;
+		exit
+	\end{lstlisting}
+	Kopieren von 'init.sql' in beliebigen Ordner.
+
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Anlegen der benötigten Tabellen duch das ausführen von 'init.sql'.}]
+		elbrus@server:~$ psql -U elbrus -d elbrus -f init.sql
+	\end{lstlisting}
+	
 	\newpage
 	
 	% --------- CAPTURE ---------
 	\section{Aufzeichnen der Daten}
+	\subsection[dependencies]{Voraussetzungen}
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Installieren von 'tcpdump' für das aufzeichnen von Daten.}]
 		elbrus@server:~$ sudo dnf install tcpdump
@@ -122,15 +227,16 @@
 		elbrus@server:~$ sudo setcap cap_net_raw,cap_net_admin=eip \
 		/usr/sbin/tcpdump
 	\end{lstlisting}
-
-	Kopieren von '.env.example', 'capture.service.example', 'elb-capture.sh', 'elb-capture-log.sh', 'elb-capture-postrotate.sh' in beliebigen Ordner 
+	
+	\subsection[file config]{Umgebung Konfigurieren}
+	Kopieren von '.env.example', 'capture.service.example', 'elb-capture.sh', 'elb-capture-log.sh', 'elb-capture-postrotate.sh' in den selben beliebigen Ordner. 
 
 	\lstset{style=files}
 	\begin{lstlisting}[caption={Anhand von '.env.example' eigene '.env' Datei anlegen}, language=bash]
 		#where the log should be stored
-		LOGFILE="/var/elbrus/capture/capture.log"
+		LOGFILE=/var/elbrus/capture/capture"-$(date +"%Y-%U")".log
 		#where the traces should be stored
-		PCAP="/var/elbrus/capture/pcap/"
+		PCAP=/var/elbrus/capture/pcap/
 		#how much time each trace should contain in seconds
 		TIMEPERCAPTURE=900
 		#the maximum amount of files
@@ -138,9 +244,10 @@
 		#the interface to capture on
 		INTERFACE=eth0
 		#the path to the 'elb-capture-postrotate.sh' script
-		POSTROTATEPATH=/var/elbrus/capture/elb-capture-postrotate.sh
+		POSTROTATESCRIPT=/var/elbrus/capture/elb-capture-postrotate.sh
 	\end{lstlisting}
 
+	\subsection[systemd service]{Der Systemd Service}
 	\begin{lstlisting}[caption={capture.service.example - Die Variable 'WorkingDirectory', Die Variable 'User' sowie die Variable 'ExecStopPost' anpassen.},language=bash ,keywords={WorkingDirectory, User, ExecStopPost}, keywordstyle=\color{red}, firstnumber=3]
 		...
 		#job is starting immediatly after the start action has been called
@@ -161,7 +268,6 @@
 		[Install]
 		...
 	\end{lstlisting}
-	
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Kopieren des Serviceprogrammes}]
@@ -200,14 +306,14 @@
 	\section{SSH Manager}
 	\subsection[file config]{Umgebung Konfigurieren}
 	
-	Kopieren von 'requirements.txt', '.env.example', 'initialise.sh', 'routine.sh', 'setup.sh', 'main.py', 'ssh-manager.service.example', 'ssh-manager-schedule.timer.example' in den selben beliebigen Ordner 
+	Kopieren von 'requirements.txt', '.env.example', 'initialise.sh', 'routine.sh', 'setup.sh', 'main.py', 'ssh-manager.service.example', 'ssh-manager-schedule.timer.example' in den selben beliebigen Ordner. 
 	
 	\lstset{style=files}
 	\begin{lstlisting}[caption={Anhand von '.env.example' eigene '.env' Datei anlegen}, language=bash]
 		#values regarding the jumpserver:
 		#IP, PORT and USER values must be set!
 		#depending on the usage you can set either:
-		#   -PASS and KEYFILE: the keyfile is used, the pass is interpreted as the passphrase
+		#   -PASS and KEYFILE: keyfile is used with passphrase
 		#   -only KEYFILE: the keyfile is used
 		#   -only PASS: the password is used as is regular credentials
 		JUMPSERVER_IP="2.2.2.15"
@@ -264,7 +370,7 @@
 	\newpage
 	\subsubsection{2 - Ohne Setup script}
 	\lstset{style=files}
-	\begin{lstlisting}[caption={'.env' - Datei anpassen}, language=bash, keywords={CONFIGPATH, MAINPATH}, keywordstyle=\color{red}, firstnumber=17]
+	\begin{lstlisting}[caption={.env - Die Variable 'CONFIGPATH' sowie die Variable 'MAINPATH' anpassen.}, language=bash, keywords={CONFIGPATH, MAINPATH}, keywordstyle=\color{red}, firstnumber=17]
 		...
 		POSTGRES_PASS=password
 		
@@ -291,13 +397,13 @@
 		elbrus@server:~$ ssh-manager/src/initialise.sh
 	\end{lstlisting}
 
-	\subsection[init commands]{Abhängigkeiten}
+	\subsection[dependencies]{Voraussetzungen}
 	\begin{lstlisting}[caption={Installieren von fehlenden python3 Packages.}]
 		elbrus@server:~$ pip3 install -r ssh-manager/requirements.txt
 	\end{lstlisting}
 
 	\newpage
-	\subsection[systemd service]{Automatisches ausführen des Skripts}
+	\subsection[systemd service]{Der Systemd Service}
 	\begin{lstlisting}[caption={Kopieren des Serviceprogrammes}]
 		elbrus@server:~$ cp src/ssh-manager.service.example \
 		 /etc/systemd/system/ssh-manager.service

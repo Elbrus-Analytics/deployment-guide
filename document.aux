@@ -8,39 +8,60 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.2}python}{2}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.3}rust}{2}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {2}Datenbank}{3}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}Aufzeichnen der Daten}{4}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {5}{\ignorespaces Installieren von 'tcpdump' für das aufzeichnen von Daten.}}{4}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {6}{\ignorespaces Anlegen eines Users der Berechtigungen zum ausführen von 'tcpdump' erhält.}}{4}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {7}{\ignorespaces Zuweisen von 'tcpdump' zu der Gruppe 'aragog'.}}{4}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {8}{\ignorespaces Ändern der Berechtigungen auf 'tcpdump'.}}{4}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {9}{\ignorespaces Anhand von '.env.example' eigene '.env' Datei anlegen}}{4}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {10}{\ignorespaces capture.service.example - Die Variable 'WorkingDirectory', Die Variable 'User' sowie die Variable 'ExecStopPost' anpassen.}}{4}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {11}{\ignorespaces Kopieren des Serviceprogrammes}}{5}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {12}{\ignorespaces Neuladen des 'systemctl' Deamons}}{5}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {13}{\ignorespaces Aktivieren des Serviceprogrammes}}{5}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {14}{\ignorespaces Starten des Serviceprogrammes}}{5}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Packet Capture Importer}{6}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}Report Generator}{7}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}SNMP Manager}{8}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}SSH Manager}{9}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}file config}{9}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {15}{\ignorespaces Anhand von '.env.example' eigene '.env' Datei anlegen}}{9}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.1.1}1 - Mit Setup script}{10}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {16}{\ignorespaces Ausführen des setup Scripts}}{10}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.1.2}2 - Ohne Setup script}{11}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {17}{\ignorespaces '.env' - Datei anpassen}}{11}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {18}{\ignorespaces ssh-manager.service.example - Die Variable 'WorkingDirectory' sowie die Variable 'User' anpassen.}}{11}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {19}{\ignorespaces Ausführen des Scripts zur Initialisierung des VCS Verzeichnisses.}}{11}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}init commands}{11}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {20}{\ignorespaces Installieren von fehlenden python3 Packages.}}{11}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}systemd service}{12}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {21}{\ignorespaces Kopieren des Serviceprogrammes}}{12}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {22}{\ignorespaces Kopieren des Zeitplanungsprogrammes.}}{12}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {23}{\ignorespaces Neuladen des 'systemctl' Deamons}}{12}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {24}{\ignorespaces Aktivieren des Serviceprogrammes}}{12}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {25}{\ignorespaces Aktivieren des Zeitplanungsprogrammes}}{12}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {26}{\ignorespaces Aktivieren des Zeitplanungsprogrammes}}{12}{}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {27}{\ignorespaces Starten des Zeitplanungsprogrammes}}{12}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8}API}{13}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {9}Webinterface}{14}{}\protected@file@percent }
-\gdef \@abspage@last{14}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}dependencies}{3}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5}{\ignorespaces Hinzufügen des PostgreSQL Drittanbieter-Repository, um die neuesten PostgreSQL-Pakete zu erhalten.}}{3}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {6}{\ignorespaces Erstellen des Timescale repository.}}{3}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {7}{\ignorespaces Berarbeiten des Timescale repository.}}{3}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {8}{\ignorespaces Updaten der lokalen Package-Liste.}}{3}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {9}{\ignorespaces Installieren von TimescaleDB}}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}TimescaleDB konfigurieren}{4}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {10}{\ignorespaces Initialisieren der Datenbank.}}{4}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {11}{\ignorespaces Verknüpfen von 'postgresql' Serive Start mit Serverstart sowie den Service starten.}}{4}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {12}{\ignorespaces var/lib/pgsql/14/data/postgresql.conf - Ändern der folgenden Zeilen}}{4}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {13}{\ignorespaces Anpassen der Datenbank Einstellungen auf die Server Hardware.}}{4}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {14}{\ignorespaces Neustarten des Services um Änderungen zu übernehmen.}}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Erstellen der Elbrus-Datenbank}{5}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {15}{\ignorespaces Verbinden mit dem interaktiven Terminal von 'postgres'.}}{5}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {16}{\ignorespaces Auführen von SQL Befehlen.}}{5}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {17}{\ignorespaces Wechseln zu erstellter Datenbank}}{5}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {18}{\ignorespaces Hinzufügen der TimescaleDB Erweiterung.}}{5}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {19}{\ignorespaces Anlegen der benötigten Tabellen duch das ausführen von 'init.sql'.}}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Aufzeichnen der Daten}{6}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}dependencies}{6}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {20}{\ignorespaces Installieren von 'tcpdump' für das aufzeichnen von Daten.}}{6}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {21}{\ignorespaces Anlegen eines Users der Berechtigungen zum ausführen von 'tcpdump' erhält.}}{6}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {22}{\ignorespaces Zuweisen von 'tcpdump' zu der Gruppe 'aragog'.}}{6}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {23}{\ignorespaces Ändern der Berechtigungen auf 'tcpdump'.}}{6}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}file config}{6}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {24}{\ignorespaces Anhand von '.env.example' eigene '.env' Datei anlegen}}{6}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}systemd service}{7}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {25}{\ignorespaces capture.service.example - Die Variable 'WorkingDirectory', Die Variable 'User' sowie die Variable 'ExecStopPost' anpassen.}}{7}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {26}{\ignorespaces Kopieren des Serviceprogrammes}}{7}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {27}{\ignorespaces Neuladen des 'systemctl' Deamons}}{7}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {28}{\ignorespaces Aktivieren des Serviceprogrammes}}{7}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {29}{\ignorespaces Starten des Serviceprogrammes}}{7}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Packet Capture Importer}{8}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Report Generator}{9}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}SNMP Manager}{10}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}SSH Manager}{11}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}file config}{11}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {30}{\ignorespaces Anhand von '.env.example' eigene '.env' Datei anlegen}}{11}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.1.1}1 - Mit Setup script}{12}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {31}{\ignorespaces Ausführen des setup Scripts}}{12}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.1.2}2 - Ohne Setup script}{13}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {32}{\ignorespaces .env - Die Variable 'CONFIGPATH' sowie die Variable 'MAINPATH' anpassen.}}{13}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {33}{\ignorespaces ssh-manager.service.example - Die Variable 'WorkingDirectory' sowie die Variable 'User' anpassen.}}{13}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {34}{\ignorespaces Ausführen des Scripts zur Initialisierung des VCS Verzeichnisses.}}{13}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}dependencies}{13}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {35}{\ignorespaces Installieren von fehlenden python3 Packages.}}{13}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}systemd service}{14}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {36}{\ignorespaces Kopieren des Serviceprogrammes}}{14}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {37}{\ignorespaces Kopieren des Zeitplanungsprogrammes.}}{14}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {38}{\ignorespaces Neuladen des 'systemctl' Deamons}}{14}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {39}{\ignorespaces Aktivieren des Serviceprogrammes}}{14}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {40}{\ignorespaces Aktivieren des Zeitplanungsprogrammes}}{14}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {41}{\ignorespaces Aktivieren des Zeitplanungsprogrammes}}{14}{}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {42}{\ignorespaces Starten des Zeitplanungsprogrammes}}{14}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}API}{15}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Webinterface}{16}{}\protected@file@percent }
+\gdef \@abspage@last{16}
