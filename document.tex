@@ -66,32 +66,6 @@
 	
 	\section[Server Infrastruktur]{Server Infrastruktur}
 	\subsection{Initiale Server Konfiguration}
-	
-	\begin{lstlisting}[caption={Installieren des DNF Konfigurations Managers, um in Folge das Remote Docker Repository hinzuzufügen.}]
-		elbrus@server:~$ dnf install dnf-plugin-config-manager
-	\end{lstlisting}
-
-	\begin{lstlisting}[caption={Installieren und aktivieren von Docker.}]
-		elbrus@server:~$ sudo dnf config-manager \
-		 --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-		
-		elbrus@server:~$ sudo dnf install docker-ce docker-ce-cli containerd.io
-		
-		elbrus@server:~$ systemctl enable docker
-		
-		elbrus@server:~$ systemctl start docker
-	\end{lstlisting}
-
-	\begin{lstlisting}[caption={Berechtigt den User Elbrus 'sudo' zu verwenden. Berechtigt den User Elbrus darüber hinaus Docker ohne 'sudo' aufzurufen. Zudem wird dem User ein Heimverzeichnis angelegt, sowie die 'Bash' als standard Konsole gesetzt.}]
-		elbrus@server:~$ useradd -s /bin/bash -G docker,wheel -m elbrus
-		
-		elbrus@server:~$ passwd elbrus
-		Changing password for user elbrus.
-		New password:
-		Retype new password:
-		passwd: all authentication tokens updated successfully.
-		elbrus@server:~$
-	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Setzen der Zeitzone auf 'Europa/Wien'.}]
 		elbrus@server:~$ sudo timedatectl set-timezone Europe/Vienna
@@ -101,50 +75,29 @@
 		elbrus@server:~$ sudo dnf install firewalld
 	\end{lstlisting}
 
-	\newpage
-	\subsection{SSH-Keys}
-	Weil der pcap-importer und der report-generator auf zwei verschiedenen Server liegen könnten, muss für die Kommunikation zwischen jenen Sever SSH-Funktionieren.
-	\newline\newline
-	Dieser Schritt kann übersprungen werden wenn alles auf einem Server installiert wird.
-	
-	\subsubsection{Capture-Server}
-	\begin{lstlisting}[caption={Anlegen der SSH-Keys}]
-		elbrus@server:~$ mkdir -p /var/elbrus/shared/.ssh/
-		elbrus@server:~$ ssh-keygen -t ecdsa -b 256 -f\
-		/var/elbrus/shared/.ssh/id_report_generator_connection -N ''
-	\end{lstlisting}
-
-	\begin{lstlisting}[caption={Übertragen der SSH-Keys auf den Database-Server.}]
-		elbrus@server:~$ ssh-copy-id -i\
-		/var/elbrus/shared/.ssh/id_report_generator_connection.pub\
-		 elbrus@10.0.76.220
-	\end{lstlisting}
-
-	\subsubsection{Database-Server}
-	\begin{lstlisting}[caption={Anlegen der SSH-Keys}]
-		elbrus@server:~$ mkdir -p /var/elbrus/shared/.ssh/
-		elbrus@server:~$ ssh-keygen -t ecdsa -b 256 -f\
-		/var/elbrus/shared/.ssh/id_capture_connection -N ''
-	\end{lstlisting}
-	
-	\begin{lstlisting}[caption={Übertragen der SSH-Keys auf den Capture-Server.}]
-		elbrus@server:~$ ssh-copy-id -i\
-		/var/elbrus/shared/.ssh/id_capture_connection.pub\
-		 elbrus@10.0.76.217
+	\subsection{Git}
+	\begin{lstlisting}[caption={Installieren von dem VCS 'git'.}]
+		elbrus@server:~$ sudo yum install -y git
 	\end{lstlisting}
 	
 	\subsection{Ablagestruktur}
 	\lstset{style=commands}
-	\begin{lstlisting}[caption={Anlegen der Ordnerstruktur.}]
-		elbrus@server:~$ mkdir sth
+	\begin{lstlisting}[caption={Anlegen der Verzeichnissstruktur.}]
+		elbrus@server:~$ mkdir /var/elbrus
 	\end{lstlisting}
+
+	\subsection{Node.Js}
+	\begin{lstlisting}[caption={Installieren des Framworks 'Node.Js'.}]
+		elbrus@server:~$ sudo dnf -y module install nodejs:12
+	\end{lstlisting}
+
 
 	\newpage
 	\subsection{Python}
 	\subsubsection{1 - Automatische Installation}
 	\begin{lstlisting}[caption={Kopieren des Github Repositorys 'report-generator'.}]
 		elbrus@server:~$ cd /var/elbrus
-		elbrus@server:~/var/elbrus$ git https://github.com/\
+		elbrus@server:~/var/elbrus$ git clone https://github.com/\
 		Elbrus-Analytics/report-generator.git
 	\end{lstlisting}
 
@@ -174,7 +127,11 @@
 		elbrus@server:~Python-3.10.0$ sudo make install
 	\end{lstlisting}
 	
-	\newpage
+	\subsubsection{Upgrade von 'pip'}
+	\begin{lstlisting}[caption={Upgraden von 'pip'.}]
+		elbrus@server:~$ /usr/local/bin/python3.10 -m pip install --upgrade pip
+	\end{lstlisting}
+
 	\subsection{Rust}
 	
 	\begin{lstlisting}[caption={Installieren von GNU Compiler Collection.}]
@@ -221,8 +178,41 @@
 	\begin{lstlisting}[caption={Hinzufügen des Befehls Cargo zu dem Pfad.}]
 		elbrus@server:~$ source ~/.cargo/env
 	\end{lstlisting}
-	\newpage
 
+	\newpage
+	\subsection{SSH-Keys}
+	
+	Weil der pcap-importer und der report-generator auf zwei verschiedenen Server liegen könnten, muss für die Kommunikation zwischen jenen Sever SSH-Funktionieren.
+	\newline\newline
+	Dieser Schritt kann übersprungen werden wenn alles auf einem Server installiert wird.
+	
+	\subsubsection{Capture-Server}
+	\begin{lstlisting}[caption={Anlegen der SSH-Keys}]
+		elbrus@server:~$ mkdir -p /var/elbrus/shared/.ssh/
+		elbrus@server:~$ ssh-keygen -t ecdsa -b 256 -f\
+		/var/elbrus/shared/.ssh/id_report_generator_connection -N ''
+	\end{lstlisting}
+	
+	\begin{lstlisting}[caption={Übertragen der SSH-Keys auf den Database-Server.}]
+		elbrus@server:~$ ssh-copy-id -i\
+		/var/elbrus/shared/.ssh/id_report_generator_connection.pub\
+		elbrus@10.0.76.220
+	\end{lstlisting}
+	
+	\subsubsection{Database-Server}
+	\begin{lstlisting}[caption={Anlegen der SSH-Keys}]
+		elbrus@server:~$ mkdir -p /var/elbrus/shared/.ssh/
+		elbrus@server:~$ ssh-keygen -t ecdsa -b 256 -f\
+		/var/elbrus/shared/.ssh/id_capture_connection -N ''
+	\end{lstlisting}
+	
+	\begin{lstlisting}[caption={Übertragen der SSH-Keys auf den Capture-Server.}]
+		elbrus@server:~$ ssh-copy-id -i\
+		/var/elbrus/shared/.ssh/id_capture_connection.pub\
+		elbrus@10.0.76.217
+	\end{lstlisting}
+	
+	\newpage
 	% --------- DATENBANK ---------
 	\section{Datenbank}
 	\subsection[dependencies]{Voraussetzungen}
@@ -344,7 +334,7 @@
 	
 	% --------- CAPTURE ---------
 	\section{Aufzeichnen der Daten}
-	\subsection[dependencies]{Voraussetzungen}
+	\subsection{Voraussetzungen}
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Installieren von 'tcpdump' für das aufzeichnen von Daten.}]
 		elbrus@server:~$ sudo dnf install tcpdump
@@ -369,17 +359,17 @@
 		elbrus@server:~$ cd /var/elbrus
 		elbrus@server:~/var/elbrus$ git clone https://github.com/\
 		Elbrus-Analytics/capture-device.git
-		elbrus@server:~$ cp capture-device/src/* capture
-		elbrus@server:~$ rm -rfd capture-device
+		elbrus@server:~/var/elbrus$ mkdir capture
+		elbrus@server:~/var/elbrus$ cp capture-device/src/* capture
+		elbrus@server:~/var/elbrus$ rm -rfd capture-device
 	\end{lstlisting}
 	
 	\newpage
 	\subsection[file config]{Umgebung Konfigurieren}
 	\subsubsection{1 - Mit Setup Script}
 	\begin{lstlisting}[caption={Ausführen des setup Scripts}, breaklines=true,]
-		elbrus@server:~$ cd /var/elbrus/capture
-		elbrus@server:~/var/elbrus/capture$ bash init.sh
-		Do you want to proceed with setup of the 'capture'? (y/n) y
+		elbrus@server:~/var/elbrus$ bash capture/init.sh
+		Do you want to proceed with setup of the 'capture-device'? (y/n) y
 		
 		Where should the log be stored (dir) [/var/elbrus/shared/log]:
 		Where is the elb-capture-postrotate.sh stored [/var/elbrus/capture/elb-capture-postrotate.sh]:
@@ -400,7 +390,7 @@
 		MAXFILES=10
 		INTERFACE=eth0
 		Cleaning up...
-		elbrus@server:~/var/elbrus/capture$
+		elbrus@server:~/var/elbrus$
 	\end{lstlisting}
 	
 	\subsubsection{2 - Ohne Setup Script}
@@ -409,14 +399,14 @@
 		#global
 		SHAREDCONFIG=/var/elbrus/shared/.config
 		
+		#path
+		POSTROTATESCRIPT=/var/elbrus/capture/elb-capture-postrotate.sh
+		LOGFILEDIR=/var/elbrus/capture/capture"-$(date +"%Y-%U")".log
+		
 		#settings
 		TIMEPERCAPTURE=900
 		MAXFILES=10
 		INTERFACE=eth0
-		
-		#path
-		POSTROTATESCRIPT=/var/elbrus/capture/elb-capture-postrotate.sh
-		LOGFILE=/var/elbrus/capture/capture"-$(date +"%Y-%U")".log
 	\end{lstlisting}
 
 	\newpage
@@ -444,20 +434,20 @@
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Kopieren des Serviceprogrammes}]
-		elbrus@server:~$ cp capture.service.example\
+		elbrus@server:~/var/elbrus$ cp capture/capture.service.example\
 		/etc/systemd/system/capture.service
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Neuladen des 'systemctl' Deamons}]
-		elbrus@server:~$ systemctl daemon-reload
+		elbrus@server:~/var/elbrus$ systemctl daemon-reload
 	\end{lstlisting}
 	
 	\begin{lstlisting}[caption={Aktivieren des Serviceprogrammes}]
-		elbrus@server:~$ systemctl enable capture.service
+		elbrus@server:~/var/elbrus$ systemctl enable capture.service
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Starten des Serviceprogrammes}]
-		elbrus@server:~$ systemctl start capture.service
+		elbrus@server:~/var/elbrus$ systemctl start capture.service
 	\end{lstlisting}
 	
 	\newpage
@@ -476,7 +466,8 @@
 	\subsubsection{1 - Mit Setup Script}
 	\begin{lstlisting}[caption={Ausführen des setup Scripts}, breaklines=true,]
 		elbrus@server:~$ cd /var/elbrus
-		elbrus@server:~/var/elbrus$ bash database/importer/pcap-importer/install.sh
+		elbrus@server:~/var/elbrus$ bash database/importer/pcap-importer/\
+		install.sh
 		Do you want to proceed? (y/n) y
 		
 		Where is the shared config stored [/var/elbrus/shared/.config]: /var/elbrus/shared/.config
@@ -526,7 +517,7 @@
 	\subsection{Installation}
 	\begin{lstlisting}[caption={Clonen der Software von GitHub.}]
 		elbrus@server:~$ cd /var/elbrus
-		elbrus@server:~/var/elbrus$ git https://github.com/\
+		elbrus@server:~/var/elbrus$ git clone https://github.com/\
 		Elbrus-Analytics/report-generator.git
 	\end{lstlisting}
 
@@ -535,7 +526,7 @@
 	\subsubsection{1 - Mit Setup Script}
 	
 	\begin{lstlisting}[caption={Ausführen des 'install.sh' Scripts.}]
-		elbrus@server:~$ bash report-generator/install.sh
+		elbrus@server:~/var/elbrus$ bash report-generator/install.sh
 		Do you want to proceed with setup of the 'report-generator'? (y/n) y
 		
 		Where is the shared config stored [/var/elbrus/shared/.config]:
@@ -545,13 +536,64 @@
 		
 		...
 		
-		elbrus@server:~$
+		elbrus@server:~/var/elbrus$
 	\end{lstlisting}
 	
 	\newpage
 	
 	% --------- SNMP MANAGER ---------
 	\section{SNMP Manager}
+	\lstset{style=commands}
+	\subsection{Installation}
+	\begin{lstlisting}[caption={Clonen der Software von GitHub.}]
+		elbrus@server:~$ cd /var/elbrus
+		elbrus@server:~/var/elbrus$ git clone https://github.com/\
+		Elbrus-Analytics/snmp-manager.git
+	\end{lstlisting}
+
+	\subsection[file config]{Umgebung Konfigurieren}
+	
+	\newpage
+	\subsection[systemd service]{Der Systemd Service}
+	\lstset{style=files}
+	\begin{lstlisting}[caption={snmp-manager.service.example - Die Variable 'WorkingDirectory' sowie die Variable 'User' anpassen.},language=bash ,keywords={WorkingDirectory, User}, keywordstyle=\color{red}, firstnumber=5]
+		...
+		#job is starting immediatly after the start action has been called
+		Type=simple
+		#the user to execute the script
+		User=elbrus
+		#the working directory
+		WorkingDirectory=/var/elbrus/snmp-manager/src
+		#which script should be executed
+		ExecStart=/bin/bash elb-snmp-manager.sh
+		...
+	\end{lstlisting}
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Kopieren des Serviceprogrammes}]
+		elbrus@server:~/var/elbrus$ cp snmp-manager/src/snmp-manager.service\
+		.example /etc/systemd/system/snmp-manager.service
+	\end{lstlisting}
+	
+	\begin{lstlisting}[caption={Kopieren des Zeitplanungsprogrammes.}]
+		elbrus@server:~/var/elbrus$ cp snmp-manager/src/snmp-manager.timer\
+		.example /etc/systemd/system/snmp-manager.timer
+	\end{lstlisting}
+	
+	\begin{lstlisting}[caption={Neuladen des 'systemctl' Deamons}]
+		elbrus@server:~/var/elbrus$ systemctl daemon-reload
+	\end{lstlisting}
+	
+	\begin{lstlisting}[caption={Aktivieren des Serviceprogrammes}]
+		elbrus@server:~/var/elbrus$ systemctl enable snmp-manager.service
+	\end{lstlisting}
+	
+	\begin{lstlisting}[caption={Aktivieren des Zeitplanungsprogrammes}]
+		elbrus@server:~/var/elbrus$ systemctl enable snmp-manager.timer
+	\end{lstlisting}
+	
+	\begin{lstlisting}[caption={Starten des Zeitplanungsprogrammes}]
+		elbrus@server:~/var/elbrus$ systemctl start snmp-manager.timer
+	\end{lstlisting}
 	\newpage
 	
 	% --------- SSH MANAGER ---------
@@ -586,6 +628,18 @@
 		MAINPATH="/the/path/to/main.py"
 	\end{lstlisting}
 	
+	\begin{lstlisting}[caption={ssh-manager.service.example - Die Variable 'WorkingDirectory' sowie die Variable 'User' anpassen.},language=bash ,keywords={WorkingDirectory, User}, keywordstyle=\color{red}, firstnumber=5]
+		...
+		#job is starting immediatly after the start action has been called
+		Type=simple
+		#the user to execute the script
+		User=elbrus
+		#the working directory
+		WorkingDirectory=/home/elbrus/Desktop/ssh-manager/src/
+		#which script should be executed
+		ExecStart=/bin/bash routine.sh
+		...
+	\end{lstlisting}
 	\newpage
 	\subsubsection{1 - Mit Setup Script}
 	\lstset{style=commands}
@@ -619,7 +673,6 @@
 		elbrus@server:~/ssh-manager/src$
 	\end{lstlisting}
 	
-	\newpage
 	\subsubsection{2 - Ohne Setup Script}
 	\lstset{style=files}
 	\begin{lstlisting}[caption={.env - Die Variable 'CONFIGPATH' sowie die Variable 'MAINPATH' anpassen.}, language=bash, keywords={CONFIGPATH, MAINPATH}, keywordstyle=\color{red}, firstnumber=17]
@@ -631,30 +684,17 @@
 		MAINPATH="/the/path/to/main.py"
 	\end{lstlisting}
 
-	\begin{lstlisting}[caption={ssh-manager.service.example - Die Variable 'WorkingDirectory' sowie die Variable 'User' anpassen.},language=bash ,keywords={WorkingDirectory, User}, keywordstyle=\color{red}, firstnumber=5]
-		...
-		#job is starting immediatly after the start action has been called
-		Type=simple
-		#the user to execute the script
-		User=elbrus
-		#the working directory
-		WorkingDirectory=/home/elbrus/Desktop/ssh-manager/src/
-		#which script should be executed
-		ExecStart=/bin/bash routine.sh
-		...
-	\end{lstlisting}
-
 	\lstset{style=commands}	
 	\begin{lstlisting}[caption={Ausführen des Scripts zur Initialisierung des VCS Verzeichnisses.}]
 		elbrus@server:~$ ssh-manager/src/initialise.sh
 	\end{lstlisting}
-
+	
+	\newpage
 	\subsection[dependencies]{Voraussetzungen}
 	\begin{lstlisting}[caption={Installieren von fehlenden python3 Packages.}]
 		elbrus@server:~$ pip3 install -r ssh-manager/requirements.txt
 	\end{lstlisting}
 
-	\newpage
 	\subsection[systemd service]{Der Systemd Service}
 	\begin{lstlisting}[caption={Kopieren des Serviceprogrammes}]
 		elbrus@server:~$ cp src/ssh-manager.service.example\
@@ -678,10 +718,6 @@
 		elbrus@server:~$ systemctl enable ssh-manager-schedule.timer
 	\end{lstlisting}
 
-	\begin{lstlisting}[caption={Aktivieren des Zeitplanungsprogrammes}]
-		elbrus@server:~$ systemctl enable ssh-manager-schedule.timer
-	\end{lstlisting}
-
 	\begin{lstlisting}[caption={Starten des Zeitplanungsprogrammes}]
 		elbrus@server:~$ systemctl start ssh-manager-schedule.timer
 	\end{lstlisting}
@@ -689,6 +725,66 @@
 	
 	% --------- API ---------
 	\section{API}
+	\lstset{style=commands}
+	\subsection{Installation}
+	\begin{lstlisting}[caption={Clonen der Software von GitHub.}]
+		elbrus@server:~$ cd /var/elbrus
+		elbrus@server:~/var/elbrus$ git clone https://github.com/\
+		Elbrus-Analytics/api.git
+		elbrus@server:~/var/elbrus$ cd api
+		elbrus@server:~/var/elbrus/api$
+	\end{lstlisting}
+
+	\subsection{Voraussetzungen}
+	\begin{lstlisting}[caption={Nachinstallieren der Abhängigkeiten.}]
+		elbrus@server:~/var/elbrus/api$ npm install
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Installieren von 'pm2'.}]
+		elbrus@server:~/var/elbrus/api$ npm install -g pm2
+	\end{lstlisting}
+
+	\newpage
+	\subsection[file config]{Umgebung Konfigurieren}
+	
+	\lstset{style=files}
+	\begin{lstlisting}[caption={Anhand von '.env.example' eigene '.env' Datei anlegen}, language=bash]
+		# Application Name
+		APP_NAME=Elbrus-API
+		
+		# Port number
+		PORT=3000
+		
+		# BASE URL
+		BASE=https://localhost:3000
+		
+		# URL of DB
+		DB_USER=
+		DB_HOST=
+		DB_DATABASE=
+		DB_PASSWORD=
+		DB_PORT=
+		
+		# JWT
+		JWT_SECRET=thisisasamplesecret
+		JWT_ACCESS_EXPIRATION_MINUTES=30
+		JWT_REFRESH_EXPIRATION_DAYS=30
+		
+		# SMTP configuration options for the email service
+		SMTP_HOST=
+		SMTP_PORT=
+		SMTP_USERNAME=
+		SMTP_PASSWORD=
+		EMAIL_FROM=
+		EMAIL_NAME=
+	\end{lstlisting}
+
+	\lstset{style=commands}
+	\subsection{Inbetriebnahme}
+	\begin{lstlisting}[caption={Starten der API.}]
+		elbrus@server:~/var/elbrus/api$ pm2 start ecosystem.config.json
+	\end{lstlisting}
+	Die API läuft in folge automatisch im Hintergrund.
 	\newpage
 	
 	\section{Webinterface}
