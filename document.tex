@@ -65,11 +65,12 @@
 	\maketitle
 	\newpage
 	
+	Bekanntes Problem: Beim herauskopieren von Befehlen wird das Apostrophe Zeichen falsch kopiert und führt zu Eingabe Störungen. Lösung: Apostrophe Zeichen des kopierten Befehls händisch im Terminal mit Apostrophe Zeichen austauschen. 
 	\section[Server Infrastruktur]{Server Infrastruktur}
 	\subsection{SSH-Zugriff vorbereiten}
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Updaten vorhandener Packages.}]
-		root@server:~$ yum update
+		root@server:~$ yum update -y
 	\end{lstlisting}
 	\begin{lstlisting}[caption={Installieren des 'ssh' Packages.}]
 		root@server:~$ yum install -y openssh-server
@@ -80,19 +81,22 @@
 	\begin{lstlisting}[caption={Aktivieren des 'sshd' Services.}]
 		root@server:~$ systemctl enable sshd
 	\end{lstlisting}
-	\begin{lstlisting}[caption={Aktivieren des 'sshd' Services.}]
-		root@server:~$ systemctl enable sshd
-	\end{lstlisting}
 	\begin{lstlisting}[caption={Anlegen des Users Elbrus.}]
 		root@server:~$ useradd elbrus
 	\end{lstlisting}
 	\begin{lstlisting}[caption={Hinzufügen des Users Elbrus zu der Gruppe 'wheel'.}]
 		root@server:~$ usermod -aG wheel elbrus
+	\end{lstlisting}
+	\begin{lstlisting}[caption={Ändern des Passwords für den User Elbrus.}]
+		root@server:~$ passwd elbrus
 		Changing password for user elbrus.
 		New password:
 		Retype new password:
 		passwd: all authentication tokens updated successfully
 		root@server:~$
+	\end{lstlisting}
+	\begin{lstlisting}[caption={Wechseln zu User elbrus.}]
+		root@server:~$ su elbrus
 	\end{lstlisting}
 	\newpage
 	
@@ -115,10 +119,10 @@
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Anlegen der Verzeichnissstruktur.}]
 		elbrus@server:~$ sudo mkdir /var/elbrus
-		elbrus@server:~$ chown -R elbrus:elbrus /var/elbrus
+		elbrus@server:~$ sudo chown -R elbrus:elbrus /var/elbrus
 		elbrus@server:~$ cd /var/elbrus
 		elbrus@server:~/var/elbrus$ mkdir shared keys
-		elbrus@server:~/var/elbrus$ chmod -R 770 /var/elbrus/shared
+		elbrus@server:~/var/elbrus$ chmod -R 777 /var/elbrus/shared
 	\end{lstlisting}
 
 	% -------- Git Repos clonen
@@ -175,7 +179,7 @@
 	\end{lstlisting}
 	
 	\begin{lstlisting}[caption={Clonen der Capture-Device Software.}]
-		elbrus@server:~/var/elbrus$ git@github.com:Elbrus-Analytics/capture-device.git\
+		elbrus@server:~/var/elbrus$ git clone git@github.com:Elbrus-Analytics/capture-device.git\
 		--config core.sshCommand="ssh -i ./keys/capture_device_key"
 		elbrus@server:~/var/elbrus$ mkdir capture
 		elbrus@server:~/var/elbrus$ cp -a capture-device/src/. capture
@@ -194,22 +198,22 @@
 	
 	\newpage
 	\begin{lstlisting}[caption={Clonen der SNMP-Manager Software.}]
-		elbrus@server:~/var/elbrus$ git@github.com:Elbrus-Analytics/snmp-manager.git\
-		--config core.sshCommand="ssh -i ./keys/snmp-manager_key"
+		elbrus@server:~/var/elbrus$ git clone git@github.com:Elbrus-Analytics/snmp-manager.git\
+		--config core.sshCommand="ssh -i ./keys/snmp_manager_key"
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Clonen der SSH-Manager Software.}]
-		elbrus@server:~/var/elbrus$ git@github.com:Elbrus-Analytics/ssh-manager.git\
-		--config core.sshCommand="ssh -i ./keys/ssh-manager_key"
+		elbrus@server:~/var/elbrus$ git clone git@github.com:Elbrus-Analytics/ssh-manager.git\
+		--config core.sshCommand="ssh -i ./keys/ssh_manager_key"
 	\end{lstlisting}
 	
 	\begin{lstlisting}[caption={Clonen der API Software.}]
-		elbrus@server:~/var/elbrus$ git@github.com:Elbrus-Analytics/api.git\
+		elbrus@server:~/var/elbrus$ git clone git@github.com:Elbrus-Analytics/api.git\
 		--config core.sshCommand="ssh -i ./keys/api_key"
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Clonen der Packet-Importer Software}]
-		elbrus@server:~/var/elbrus$ git@github.com:Elbrus-Analytics/webinterface.git\
+		elbrus@server:~/var/elbrus$ git clone git@github.com:Elbrus-Analytics/webinterface.git\
 		--config core.sshCommand="ssh -i ./keys/webinterface_key"
 	\end{lstlisting}
 
@@ -217,14 +221,9 @@
 	\subsection{Python}
 	\lstset{style=commands}
 	\subsubsection{1 - Automatische Installation}
-	\begin{lstlisting}[caption={Kopieren des Github Repositorys 'report-generator'.}]
-		elbrus@server:~$ cd /var/elbrus
-		elbrus@server:~/var/elbrus$ git clone https://github.com/\
-		Elbrus-Analytics/report-generator.git
-	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Ausführen des 'pythonSourceInstall.sh' Scripts.}]
-		elbrus@server:~/var/elbrus$ bash report-generator/pythonSourceInstall.sh
+		elbrus@server:~/var/elbrus$ sudo bash report-generator/pythonSourceInstall.sh
 	\end{lstlisting}
 	
 	\subsubsection{2 - Manuel Installation}
@@ -292,7 +291,7 @@
 		source "$HOME/.cargo/env"
 		elbrus@server:~$
 	\end{lstlisting}
-
+	
 	\begin{lstlisting}[caption={Laden der Variablen aus dem Terminal Profil.}]
 		elbrus@server:~$ source ~/.profile
 	\end{lstlisting}
@@ -363,7 +362,7 @@
 
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Updaten der lokalen Package-Liste.}]
-		elbrus@server:~$ sudo yum update
+		elbrus@server:~$ sudo yum update -y
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Installieren von TimescaleDB.}]
@@ -392,7 +391,7 @@
 		<@\textcolor{codegreen}{+ listen\_addresses = '*'}@>
 	\end{lstlisting}
 	
-	\begin{lstlisting}[caption={var/lib/pgsql/14/data/ph\_hba.conf - Ändern der folgenden Zeilen.}, numbers=none]
+	\begin{lstlisting}[caption={var/lib/pgsql/14/data/pg\_hba.conf - Ändern der folgenden Zeilen.}, numbers=none]
 		# TYPE      DATABASE      USER      ADDRESS      METHOD
 		<@\textcolor{codegreen}{+ host}@>       <@\textcolor{codegreen}{elbrus}@>         <@\textcolor{codegreen}{elbrus}@>     <@\textcolor{codegreen}{0.0.0.0/0}@>      <@\textcolor{codegreen}{trust}@>
 	\end{lstlisting}
@@ -445,6 +444,30 @@
 	
 	\newpage
 	
+	% ----------- Globale Konfiguration
+	\section{Globale Konfiguration}
+	\lstset{style=files}
+	\begin{lstlisting}[caption={Anhand von '.config.example' eigene '.config' Datei in \newline'/var/elbrus/shared' anlegen.}, language=bash]
+		#database settings
+		DB_HOST=localhost
+		DB_PORT=5432
+		DB_NAME=elbrus
+		DB_USER=elbrus
+		DB_PASSWORD=elbrus123!
+		
+		#paths
+		PCAPFOLDER=/var/elbrus/shared/traces
+		IMPORTERPATH=/var/elbrus/pcap-importer/pcap-importer
+		REPORTERPATH=/var/elbrus/report-generator/src/main.py
+	\end{lstlisting}
+
+	\lstset{style=commands}
+	\begin{lstlisting}
+		elbrus@server:~/var/elbrus$ sudo chown elbrus:elbrus /var/elbrus/shared/.config
+		elbrus@server:~/var/elbrus$ sudo chmod 776 /var/elbrus/shared/.config
+	\end{lstlisting}
+	\newpage
+	
 	% --------- CAPTURE ---------
 	\section{Aufzeichnen der Daten}
 	\subsection{Voraussetzungen}
@@ -456,15 +479,29 @@
 	\begin{lstlisting}[caption={Anlegen eines Users der Berechtigungen zum ausführen von 'tcpdump' erhält.}]
 		elbrus@server:~$ sudo useradd aragog
 	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Hinzufügen von User 'aragog' zu Gruppe 'elbrus'.}]
+		elbrus@server:~$ sudo usermod -aG elbrus aragog
+	\end{lstlisting}
 	
 	\begin{lstlisting}[caption={Zuweisen von 'tcpdump' zu der Gruppe 'aragog'.}]
 		elbrus@server:~$ sudo chgrp aragog /usr/sbin/tcpdump
 	\end{lstlisting}
 	
 	\begin{lstlisting}[caption={Ändern der Berechtigungen auf 'tcpdump'.}]
-		elbrus@server:~$ chmod 750 /usr/sbin/tcpdump
+		elbrus@server:~$ sudo chmod 750 /usr/sbin/tcpdump
 		elbrus@server:~$ sudo setcap cap_net_raw,cap_net_admin=eip \
 		/usr/sbin/tcpdump
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Wechseln des Owners \& der Berechtigung auf '/var/elbrus/capture/'}]
+		elbrus@server:~$ sudo chown -R aragog:aragog /var/elbrus/capture/
+		elbrus@server:~$ sudo chmod -R 770 /var/elbrus/capture/
+		elbrus@server:~$ sudo chmod 777 /var/elbrus/capture/
+	\end{lstlisting}
+
+	\begin{lstlisting}caption={Ändern der Berechtigung auf '/var/elbrus/capture/install.sh'
+		elbrus@server:~/var/elbrus$ sudo chmod 777 /var/elbrus/capture/install.sh
 	\end{lstlisting}
 	
 	\newpage
@@ -563,7 +600,7 @@
 	\subsubsection{1 - Mit Setup Script}
 	\begin{lstlisting}[caption={Ausführen des 'install.sh' Scripts.}, breaklines=true,]
 		elbrus@server:~$ cd /var/elbrus
-		elbrus@server:~/var/elbrus$ sudo bash database/importer/pcap-importer/\
+		elbrus@server:~/var/elbrus$ bash database/importer/pcap-importer/\
 		install.sh
 		Do you want to proceed? (y/n) y
 		
@@ -597,12 +634,9 @@
 	\end{lstlisting}
 
 	\lstset{style=commands}
-	\begin{lstlisting}[caption={Wechseln des Besitzers von Database.}]
-		elbrus@server:~/var/elbrus$ sudo chown -R elbrus:elbrus /var/elbrus/database/
-	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Updaten der git Submodule.}]
-		elbrus@server:~/var/elbrus$ sudo git -C database submodule update --init
+		elbrus@server:~/var/elbrus$ git -C database submodule update --init
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Kompilieren des 'pcap-importers'.}]
@@ -611,8 +645,8 @@
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Kopieren des 'pcap-importers' in ein eigenes Verzeichniss.}]
-		elbrus@server:~/var/elbrus$ sudo mkdir -p /var/elbrus/pcap-importer
-		elbrus@server:~/var/elbrus$ sudo mv database/importer/pcap-importer/target/\
+		elbrus@server:~/var/elbrus$ mkdir -p /var/elbrus/pcap-importer
+		elbrus@server:~/var/elbrus$ mv database/importer/pcap-importer/target/\
 		release/pcap-importer /var/elbrus/pcap-importer/pcap-importer
 	\end{lstlisting}
 	\newpage
@@ -647,24 +681,6 @@
 	\begin{lstlisting}[caption={Installieren von fehlenden python3 Packages.}]
 		elbrus@server:~/var/elbrus$ pip3 install -r \
 		report-generator/requirements.txt
-	\end{lstlisting}
-	\newpage
-	
-	% ----------- Globale Konfiguration
-	\section{Globale Konfiguration}
-	\lstset{style=files}
-	\begin{lstlisting}[caption={Anhand von '.config.example' eigene '.config' Datei in \newline'/var/elbrus/shared' anlegen.}, language=bash]
-		#database settings
-		DB_HOST=10.0.76.220
-		DB_PORT=5432
-		DB_NAME=elbrus
-		DB_USER=elbrus
-		DB_PASSWORD=elbrus123!
-		
-		#paths
-		PCAPFOLDER=/var/elbrus/shared/traces
-		IMPORTERPATH=/var/elbrus/pcap-importer/pcap-importer
-		REPORTERPATH=/var/elbrus/report-generator/src/main.py
 	\end{lstlisting}
 	\newpage
 	
@@ -870,29 +886,29 @@
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Kopieren des Serviceprogrammes.}]
-		elbrus@server:~$ cp src/ssh-manager.service.example\
+		elbrus@server:~$ sudo cp ssh-manager/src/ssh-manager.service.example\
 		/etc/systemd/system/ssh-manager.service
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Kopieren des Zeitplanungsprogrammes.}]
-		elbrus@server:~$ cp src/ssh-manager-schedule.timer.example\
+		elbrus@server:~$ sudo cp ssh-manager/src/ssh-manager-schedule.timer.example\
 		/etc/systemd/system/ssh-manager-schedule.timer
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Neuladen des 'systemctl' Deamons.}]
-		elbrus@server:~$ systemctl daemon-reload
+		elbrus@server:~$ sudo systemctl daemon-reload
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Aktivieren des Serviceprogrammes.}]
-		elbrus@server:~$ systemctl enable ssh-manager.service
+		elbrus@server:~$ sudo systemctl enable ssh-manager.service
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Aktivieren des Zeitplanungsprogrammes.}]
-		elbrus@server:~$ systemctl enable ssh-manager-schedule.timer
+		elbrus@server:~$ sudo systemctl enable ssh-manager-schedule.timer
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Starten des Zeitplanungsprogrammes.}]
-		elbrus@server:~$ systemctl start ssh-manager-schedule.timer
+		elbrus@server:~$ sudo systemctl start ssh-manager-schedule.timer
 	\end{lstlisting}
 	\newpage
 	
@@ -901,14 +917,14 @@
 	\lstset{style=commands}
 
 	\subsection{Voraussetzungen}
-	\begin{lstlisting}[caption={Nachinstallieren der Abhängigkeiten.}]
-		elbrus@server:~/var/elbrus/api$ npm install
-	\end{lstlisting}
-
 	\begin{lstlisting}[caption={Installieren von 'pm2'.}]
-		elbrus@server:~/var/elbrus/api$ npm install -g pm2
+		elbrus@server:~/var/elbrus$ sudo npm install -g pm2
 	\end{lstlisting}
 
+	\begin{lstlisting}[caption={Nachinstallieren der Abhängigkeiten.}]
+		elbrus@server:~/var/elbrus$ cd api
+		elbrus@server:~/var/elbrus/api$ sudo npm install
+	\end{lstlisting}
 	\newpage
 	\subsection[file config]{Umgebung Konfigurieren}
 	
