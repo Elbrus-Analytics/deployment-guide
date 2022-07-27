@@ -228,25 +228,31 @@
 	
 	\subsubsection{2 - Manuel Installation}
 	\begin{lstlisting}[caption={Installieren von benötigten Packeten und Abhängigkeiten.}]
-		elbrus@server:~$ sudo dnf install gcc openssl-devel bzip2-devel\
+		elbrus@server:~$ cd /var/elbrus
+		elbrus@server:~/var/elbrus$ sudo dnf install gcc openssl-devel bzip2-devel\
 		libffi-devel zlib-devel wget make -y
 	\end{lstlisting}
 	
 	\begin{lstlisting}[caption={Extrahieren der installierent Dateien.}]
-		elbrus@server:~$ tar -xf Python-3.10.2.tar.xz
+		elbrus@server:~/var/elbrus$ tar -xf Python-3.10.2.tar.xz
 	\end{lstlisting}
 	
 	\begin{lstlisting}[caption={Wechseln zu source Verzeichniss. Und ausführen des Konfigurations Scripts.}]
-		elbrus@server:~$ cd Python-3.10.0 && ./configure --enable-optimizations
+		elbrus@server:~/var/elbrus$ cd Python-3.10.0 && ./configure --enable-optimizations
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Starten des build Prozesses.}]
-		elbrus@server:~Python-3.10.0$ cd make -j $(nproc)
+		elbrus@server:~/var/elbrus/Python-3.10.0$ cd make -j $(nproc)
 	\end{lstlisting}
 	
 	\begin{lstlisting}[caption={Installieren von Python.}]
-		elbrus@server:~Python-3.10.0$ sudo make install
+		elbrus@server:~/var/elbrus/Python-3.10.0$ sudo make install
 	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Löschen der kompremierten Python Datei.}]
+		elbrus@server:~/var/elbrus/Python-3.10.0$ cd .. && rm Python-3.10.0.tar.xz
+	\end{lstlisting}
+
 	
 	\subsubsection{Upgrade von 'pip'}
 	\begin{lstlisting}[caption={Upgraden von 'pip'.}]
@@ -861,11 +867,11 @@
 
 	\lstset{style=commands}	
 	\begin{lstlisting}[caption={Ausführen des Scripts zur Initialisierung des VCS Verzeichnisses.}]
-		elbrus@server:~ssh-manager$ bash src/setup.sh
+		elbrus@server:~/var/elbrus/ssh-manager$ bash src/setup.sh
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Installieren von fehlenden python3 Packages.}]
-		elbrus@server:~ssh-manager$ pip3 install -r requirements.txt
+		elbrus@server:~/var/elbrus/ssh-manager$ pip3 install -r requirements.txt
 	\end{lstlisting}
 	
 	\newpage
@@ -886,29 +892,29 @@
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Kopieren des Serviceprogrammes.}]
-		elbrus@server:~$ sudo cp ssh-manager/src/ssh-manager.service.example\
+		elbrus@server:~/var/elbrus$ sudo cp ssh-manager/src/ssh-manager.service.example\
 		/etc/systemd/system/ssh-manager.service
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Kopieren des Zeitplanungsprogrammes.}]
-		elbrus@server:~$ sudo cp ssh-manager/src/ssh-manager-schedule.timer.example\
+		elbrus@server:~/var/elbrus$ sudo cp ssh-manager/src/ssh-manager-schedule.timer.example\
 		/etc/systemd/system/ssh-manager-schedule.timer
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Neuladen des 'systemctl' Deamons.}]
-		elbrus@server:~$ sudo systemctl daemon-reload
+		elbrus@server:~/var/elbrus$ sudo systemctl daemon-reload
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Aktivieren des Serviceprogrammes.}]
-		elbrus@server:~$ sudo systemctl enable ssh-manager.service
+		elbrus@server:~/var/elbrus$ sudo systemctl enable ssh-manager.service
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Aktivieren des Zeitplanungsprogrammes.}]
-		elbrus@server:~$ sudo systemctl enable ssh-manager-schedule.timer
+		elbrus@server:~/var/elbrus$ sudo systemctl enable ssh-manager-schedule.timer
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Starten des Zeitplanungsprogrammes.}]
-		elbrus@server:~$ sudo systemctl start ssh-manager-schedule.timer
+		elbrus@server:~/var/elbrus$ sudo systemctl start ssh-manager-schedule.timer
 	\end{lstlisting}
 	\newpage
 	
