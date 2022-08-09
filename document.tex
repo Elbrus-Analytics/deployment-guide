@@ -66,27 +66,41 @@
 	\newpage
 	
 	Bekanntes Problem: Beim herauskopieren von Befehlen wird das Apostrophe Zeichen falsch kopiert und führt zu Eingabe Störungen. Lösung: Apostrophe Zeichen des kopierten Befehls händisch im Terminal mit Apostrophe Zeichen austauschen. 
+	
 	\section[Server Infrastruktur]{Server Infrastruktur}
 	\subsection{SSH-Zugriff vorbereiten}
+	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Updaten vorhandener Packages.}]
 		root@server:~$ yum update -y
 	\end{lstlisting}
+	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Installieren des 'ssh' Packages.}]
 		root@server:~$ yum install -y openssh-server
 	\end{lstlisting}
+
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Starten des 'sshd' Services.}]
 		root@server:~$ systemctl start sshd
 	\end{lstlisting}
+
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Aktivieren des 'sshd' Services.}]
 		root@server:~$ systemctl enable sshd
 	\end{lstlisting}
+
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Anlegen des Users Elbrus.}]
 		root@server:~$ useradd elbrus
 	\end{lstlisting}
+
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Hinzufügen des Users Elbrus zu der Gruppe 'wheel'.}]
 		root@server:~$ usermod -aG wheel elbrus
 	\end{lstlisting}
+
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Ändern des Passwords für den User Elbrus.}]
 		root@server:~$ passwd elbrus
 		Changing password for user elbrus.
@@ -95,6 +109,8 @@
 		passwd: all authentication tokens updated successfully
 		root@server:~$
 	\end{lstlisting}
+
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Wechseln zu User elbrus.}]
 		root@server:~$ su elbrus
 	\end{lstlisting}
@@ -102,20 +118,25 @@
 	
 	\subsection{Initiale Server Konfiguration}
 
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Setzen der Zeitzone auf 'Europa/Wien'.}]
 		elbrus@server:~$ sudo timedatectl set-timezone Europe/Vienna
 	\end{lstlisting}
 
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Installieren von dem 'firewalld' Service.}]
 		elbrus@server:~$ sudo dnf install firewalld
 	\end{lstlisting}
 	
 	\subsubsection{Node.Js}
+	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Installieren des Framworks 'Node.Js'.}]
 		elbrus@server:~$ sudo dnf -y module install nodejs:12
 	\end{lstlisting}
 	
 	\subsubsection{Ablagestruktur}
+	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Anlegen der Verzeichnissstruktur.}]
 		elbrus@server:~$ sudo mkdir /var/elbrus
@@ -124,68 +145,85 @@
 		elbrus@server:~/var/elbrus$ mkdir shared keys
 		elbrus@server:~/var/elbrus$ chmod -R 777 /var/elbrus/shared
 	\end{lstlisting}
+	\newpage
 
 	% -------- Git Repos clonen
-	\newpage
-	\lstset{style=commands}
 	\subsection{Git}
+	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Installieren von dem VCS 'git'.}]
 		elbrus@server:~$ sudo yum install -y git
 	\end{lstlisting}
+	
+	\lstset{style=commands}
 	\subsubsection{Git - Erstellen der SSH-Keys}
 	\begin{lstlisting}[caption={Wechseln des Verzeichnisses.}]
 		elbrus@server:~$ cd /var/elbrus/keys
 	\end{lstlisting}
 	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Erstellen des SSH-keys der für das Herunterladen der 'Database' benötigt wird.}]
 		elbrus@server:~/var/elbrus/keys$ ssh-keygen -t rsa -b 2048 -f database_key -q -N ""
 	\end{lstlisting}
 
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Erstellen des SSH-keys der für das Herunterladen des 'Capture-Device' benötigt wird.}]
 		elbrus@server:~/var/elbrus/keys$ ssh-keygen -t rsa -b 2048 -f capture_device_key -q -N ""
 	\end{lstlisting}
 
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Erstellen des SSH-keys der für das Herunterladen des 'Report-Generator' benötigt wird.}]
 		elbrus@server:~/var/elbrus/keys$ ssh-keygen -t rsa -b 2048 -f\
 		 report_generator_key -q -N ""
 	\end{lstlisting}
 
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Erstellen des SSH-keys der für das Herunterladen des 'SNMP-Managers' benötigt wird.}]
 		elbrus@server:~/var/elbrus/keys$ ssh-keygen -t rsa -b 2048 -f snmp_manager_key -q -N ""
 	\end{lstlisting}
 
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Erstellen des SSH-keys der für das Herunterladen des 'SSH-Managers' benötigt wird.}]
 		elbrus@server:~/var/elbrus/keys$ ssh-keygen -t rsa -b 2048 -f ssh_manager_key -q -N ""
 	\end{lstlisting}
 	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Erstellen des SSH-keys der für das Herunterladen des 'Uptime-Monitors' benötigt wird.}]
 		elbrus@server:~/var/elbrus/keys$ ssh-keygen -t rsa -b 2048 -f uptime_monitor_key -q -N ""
 	\end{lstlisting}
 	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Erstellen des SSH-keys der für das Herunterladen des 'geo session finders' benötigt wird.}]
 		elbrus@server:~/var/elbrus/keys$ ssh-keygen -t rsa -b 2048\
 		 -f geo_session_finder_key -q -N ""
 	\end{lstlisting}
 	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Erstellen des SSH-keys der für das Herunterladen der 'API' benötigt wird.}]
 		elbrus@server:~/var/elbrus/keys$ ssh-keygen -t rsa -b 2048 -f api_key -q -N ""
 	\end{lstlisting}
 	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Erstellen des SSH-keys der für das Herunterladen des 'Webinterfaces' benötigt wird.}]
 		elbrus@server:~/var/elbrus/keys$ ssh-keygen -t rsa -b 2048 -f webinterface_key -q -N ""
 	\end{lstlisting}
+
 	Bevor mit der Installation vorgefahren werden kann müssen die soeben angelegten SSH-Keys an "keys@Elbrus-Analytics.at" gesendet werden. Bitte beachten Sie, dass Ihre Email-Adresse Sie als berechtigten Nutzer ausweist.
 	
 	\subsubsection{Git - Clonen der Software}
+
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Wechseln des Verzeichnisses.}]
 		elbrus@server:~$ cd /var/elbrus
 	\end{lstlisting}
 	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Clonen der Datenbank Software.}]
 		elbrus@server:~/var/elbrus$ git clone git@github.com:Elbrus-Analytics/database.git\
 		 --config core.sshCommand="ssh -i ./keys/database_key"
 	\end{lstlisting}
 	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Clonen der 'Capture-Device' Software.}]
 		elbrus@server:~/var/elbrus$ git clone git@github.com:Elbrus-Analytics/capture-device.git\
 		 --config core.sshCommand="ssh -i ./keys/capture_device_key"
@@ -194,95 +232,113 @@
 		elbrus@server:~/var/elbrus$ rm -rfd capture-device
 	\end{lstlisting}
 	
+	%\lstset{style=commands}
 	%\begin{lstlisting}[caption={Clonen der Packet-Importer Software}]
 	%	elbrus@server:~/var/elbrus$ git clone https://github.com/\
 	%	Elbrus-Analytics/database.git
 	%\end{lstlisting}
 
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Clonen der 'Report-Generator' Software.}]
 		elbrus@server:~/var/elbrus$ git clone git@github.com:Elbrus-Analytics/\
 		report-generator.git --config core.sshCommand="ssh -i ./keys/report_generator_key"
 	\end{lstlisting}
 	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Clonen der 'SNMP-Manager' Software.}]
 		elbrus@server:~/var/elbrus$ git clone git@github.com:Elbrus-Analytics/snmp-manager.git\
 		 --config core.sshCommand="ssh -i ./keys/snmp_manager_key"
 	\end{lstlisting}
 
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Clonen der 'SSH-Manager' Software.}]
 		elbrus@server:~/var/elbrus$ git clone git@github.com:Elbrus-Analytics/ssh-manager.git\
 		 --config core.sshCommand="ssh -i ./keys/ssh_manager_key"
 	\end{lstlisting}
 	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Clonen der 'Uptime-Monitor' Software.}]
 		elbrus@server:~/var/elbrus$ git clone git@github.com:Elbrus-Analytics/api.git\
 		 --config core.sshCommand="ssh -i ./keys/uptime_monitor_key"
 	\end{lstlisting}
 
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Clonen 'geo session finders' Software.}]
 		elbrus@server:~/var/elbrus/keys$ git clone git@github.com:Elbrus-Analytics/\
 		geo_session_finder.git --config core.sshCommand="ssh -i ./keys/geo_session_finder_key"
 	\end{lstlisting}
 	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Clonen der API Software.}]
 		elbrus@server:~/var/elbrus$ git clone git@github.com:Elbrus-Analytics/api.git\
 		 --config core.sshCommand="ssh -i ./keys/api_key"
 	\end{lstlisting}
 
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Clonen der Packet-Importer Software}]
 		elbrus@server:~/var/elbrus$ git clone git@github.com:Elbrus-Analytics/webinterface.git\
 		 --config core.sshCommand="ssh -i ./keys/webinterface_key"
 	\end{lstlisting}
-
 	\newpage
+	
 	\subsection{Python}
-	\lstset{style=commands}
 	\subsubsection{1 - Automatische Installation}
 
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Ausführen des 'pythonSourceInstall.sh' Scripts.}]
 		elbrus@server:~/var/elbrus$ sudo bash report-generator/pythonSourceInstall.sh
 	\end{lstlisting}
 	
 	\subsubsection{2 - Manuel Installation}
+	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Installieren von benötigten Packeten und Abhängigkeiten.}]
 		elbrus@server:~$ cd /var/elbrus
 		elbrus@server:~/var/elbrus$ sudo dnf install gcc openssl-devel bzip2-devel\
 		libffi-devel zlib-devel wget make -y
 	\end{lstlisting}
 	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Herunterladen der Source Datei.}]
 		elbrus@server:~/var/elbrus$ wget https://www.python.org/ftp/python/\
 		3.10.0/Python-3.10.0.tar.xz
 	\end{lstlisting}
 	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Extrahieren der installierten Datei.}]
 		elbrus@server:~/var/elbrus$ tar -xf Python-3.10.2.tar.xz
 	\end{lstlisting}
 	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Wechseln zu source Verzeichniss. Und ausführen des Konfigurations Scripts.}]
 		elbrus@server:~/var/elbrus$ cd Python-3.10.0 && ./configure --enable-optimizations
 	\end{lstlisting}
 
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Starten des build Prozesses.}]
 		elbrus@server:~/var/elbrus/Python-3.10.0$ cd make -j $(nproc)
 	\end{lstlisting}
 	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Installieren von Python.}]
 		elbrus@server:~/var/elbrus/Python-3.10.0$ sudo make install
 	\end{lstlisting}
 
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Löschen der kompremierten Python Datei.}]
 		elbrus@server:~/var/elbrus/Python-3.10.0$ cd .. && rm Python-3.10.0.tar.xz
 	\end{lstlisting}
 
-	
 	\subsubsection{Upgrade von 'pip'}
+
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Upgraden von 'pip'.}]
 		elbrus@server:~$ /usr/local/bin/python3.10 -m pip install --upgrade pip
 	\end{lstlisting}
 
 	\subsection{Rust}
 	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Installieren von GNU Compiler Collection.}]
 		elbrus@server:~$ sudo dnf install gcc -y
 	\end{lstlisting}
@@ -320,10 +376,12 @@
 		elbrus@server:~$
 	\end{lstlisting}
 	
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Laden der Variablen aus dem Terminal Profil.}]
 		elbrus@server:~$ source ~/.profile
 	\end{lstlisting}
 
+	\lstset{style=commands}
 	\begin{lstlisting}[caption={Hinzufügen des Befehls Cargo zu dem Pfad.}]
 		elbrus@server:~$ source ~/.cargo/env
 	\end{lstlisting}
