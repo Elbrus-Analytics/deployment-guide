@@ -1,0 +1,115 @@
+% --------- deployment guide for the database ---------
+	\subsection[dependencies]{Voraussetzungen}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Hinzufügen des PostgreSQL Drittanbieter-Repository, um die neuesten PostgreSQL-Pakete zu erhalten.}]
+		elbrus@server:~$ sudo yum install\
+		https://download.postgresql.org/pub/repos/yum/reporpms/\
+		EL-$(rpm -E %{rhel})-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Erstellen des Timescale repository.}]
+		elbrus@server:~$ sudo tee /etc/yum.repos.d/timescale_timescaledb.repo <<EOL
+		[timescale_timescaledb]
+		name=timescale_timescaledb
+		baseurl=https://packagecloud.io/timescale/timescaledb/el/$(rpm -E %{rhel})/\$basearch
+		repo_gpgcheck=1
+		gpgcheck=0
+		enabled=1
+		gpgkey=https://packagecloud.io/timescale/timescaledb/gpgkey
+		sslverify=1
+		sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+		metadata_expire=300
+		EOL
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Updaten der lokalen Package-Liste.}]
+		elbrus@server:~$ sudo yum update -y
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Installieren von TimescaleDB.}]
+		elbrus@server:~$ sudo dnf -qy module disable postgresql
+		elbrus@server:~$ sudo dnf install postgresql14 postgresql14-server -y
+		elbrus@server:~$ sudo dnf install timescaledb-2-postgresql-14 -y
+	\end{lstlisting}
+	\newpage
+	
+	\subsection[TimescaleDB konfigurieren]{Umgebung Konfigurieren}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Initialisieren der Datenbank.}]
+		elbrus@server:~$ sudo /usr/pgsql-14/bin/postgresql-14-setup initdb
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Verknüpfen von 'postgresql' Serive Start mit Serverstart sowie den Service starten.}]
+		elbrus@server:~$ sudo systemctl enable postgresql-14
+		elbrus@server:~$ sudo systemctl start postgresql-14
+	\end{lstlisting}
+	
+	\lstset{style=files}
+	\begin{lstlisting}[caption={/var/lib/pgsql/14/data/postgresql.conf - Ändern der folgenden Zeilen.}, numbers=none]
+		<@\textcolor{red}{- \#shared\_preload\_libraries = ''}@>
+		<@\textcolor{codegreen}{+ shared\_preload\_libraries = 'timescaledb'}@>
+		
+		<@\textcolor{red}{- \#listen\_addresses = 'localhost'}@>
+		<@\textcolor{codegreen}{+ listen\_addresses = '*'}@>
+	\end{lstlisting}
+	
+	\lstset{style=files}
+	\begin{lstlisting}[caption={/var/lib/pgsql/14/data/pg\_hba.conf - Ändern der folgenden Zeilen.}, numbers=none]
+		# TYPE      DATABASE      USER      ADDRESS      METHOD
+		<@\textcolor{codegreen}{+ host}@>       <@\textcolor{codegreen}{elbrus}@>         <@\textcolor{codegreen}{elbrus}@>     <@\textcolor{codegreen}{0.0.0.0/0}@>      <@\textcolor{codegreen}{trust}@>
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Anpassen der Datenbank Einstellungen auf die Server Hardware.}]
+		elbrus@server:~$ sudo timescaledb-tune --pg-config=/usr/\
+		pgsql-14/bin/pg_config --yes
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Neustarten des Services um Änderungen zu übernehmen.}]
+		elbrus@server:~$ sudo systemctl restart postgresql-14
+	\end{lstlisting}
+	\newpage
+	
+	\subsection{Erstellen der Elbrus-Datenbank}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Verbinden mit dem interaktiven Terminal von 'postgres'.}]
+		elbrus@server:~$ sudo su postgres -c psql
+	\end{lstlisting}
+	Im folgenden Text sind markierte Abschnitte Variablen, welche im darunterliegen SQL gerändert werden können, was aus Sichertsgründen dringend empfohlen wird.
+	\begin{enumerate}
+		\item Die Datenbank elbrus anlegen
+		\item Die Zeitzone auf Europe/Vienna setzen
+		\item Den User elbrus mit dem Passwort elbrus123! anlegen
+		\item Dem User alle rechte auf die voher erstellte Datenbank geben
+	\end{enumerate}	
+	
+	\lstset{style=files}
+	\begin{lstlisting}[caption={Auführen von SQL Befehlen.}, numbers=none]
+		<@\textcolor{amber}{CREATE DATABASE}@> <@\textcolor{darkorchid}{ elbrus}@>;
+		<@\textcolor{amber}{ALTER DATABASE}@> elbrus <@\textcolor{amber}{SET}@> timezone TO <@\textcolor{deepskyblue}{'Europe/Vienna'}@>;
+		<@\textcolor{amber}{CREATE USER}@> <@\textcolor{darkorchid}{ elbrus}@> PASSWORD <@\textcolor{deepskyblue}{'elbrus123!'}@>;
+		<@\textcolor{amber}{GRANT}@> ALL <@\textcolor{amber}{ON}@> DATABASE elbrus TO elbrus;
+	\end{lstlisting}
+	
+	\begin{lstlisting}[caption={Wechseln zu erstellter Datenbank.}, numbers=none]
+		\c elbrus
+	\end{lstlisting}
+	
+	\begin{lstlisting}[caption={Hinzufügen der TimescaleDB Erweiterung.}, numbers=none]
+		<@\textcolor{amber}{CREATE EXTENSION IF NOT EXISTS}@> timescaledb;
+		exit
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Anlegen der benötigten Tabellen duch das ausführen von 'init.sql'.}]
+		elbrus@server:~/var/elbrus$ psql -U elbrus -d elbrus -f \
+		database/sql/init.sql
+	\end{lstlisting}

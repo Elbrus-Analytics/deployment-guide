@@ -1,0 +1,77 @@
+% --------- deployment guide for the API ---------		
+	\subsection{Voraussetzungen}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Installieren von 'pm2'.}]
+		elbrus@server:~/var/elbrus$ sudo npm install -g pm2
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Nachinstallieren der Abhängigkeiten.}]
+		elbrus@server:~/var/elbrus$ cd api
+		elbrus@server:~/var/elbrus/api$ sudo npm install
+	\end{lstlisting}
+	\newpage
+	
+	\subsection[file config]{Umgebung Konfigurieren}
+	
+	\lstset{style=files}
+	\begin{lstlisting}[caption={Anhand von '.env.example' eigene '.env' Datei anlegen.}, language=bash]
+		# Application Name
+		APP_NAME=Elbrus-API
+		
+		# Port number
+		PORT=3000
+		
+		# BASE URL
+		BASE=https://localhost:3000
+		
+		# URL of DB
+		DB_USER=
+		DB_HOST=
+		DB_DATABASE=
+		DB_PASSWORD=
+		DB_PORT=
+		
+		# JWT
+		JWT_SECRET=thisisasamplesecret
+		JWT_ACCESS_EXPIRATION_MINUTES=30
+		JWT_REFRESH_EXPIRATION_DAYS=30
+		
+		# SMTP configuration options for the email service
+		SMTP_HOST=
+		SMTP_PORT=
+		SMTP_USERNAME=
+		SMTP_PASSWORD=
+		EMAIL_FROM=
+		EMAIL_NAME=
+	\end{lstlisting}
+	
+	\subsection{Inbetriebnahme}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Starten der API.}]
+		elbrus@server:~/var/elbrus/api$ pm2 start ecosystem.config.json
+	\end{lstlisting}
+	Die API läuft in folge automatisch im Hintergrund.
+	\newpage
+	
+	\begin{enumerate}
+		\item \textbf{APP\_NAME} wird rein als beschreibender Name genutzt und kann so belassen werden.
+		\item \textbf{PORT} beschreibt den TCP Port auf dem die Applikation laufen soll.
+		\item \textbf{BASE} ist der Wert der Basis URL auf welche zugegriffen wird. Hier muss der Port auch angegeben werden!
+		\item \textbf{DB\_USER} ist der benutzername des DBMS Benutzers, über welchen der Zugriff auf die Datenbank läuft.
+		\item \textbf{DB\_HOST} ist der hostname/ip-adresse des Servers welcher die Datenbank hostet.
+		\item \textbf{DB\_DATABASE} beschreibt den Namen der Datenbank selber.
+		\item \textbf{DB\_PASSWORD} ist das Passwort des DBMS Benutzers, über welchen der Zugriff auf die Datenbank läuft.
+		\item \textbf{DB\_PORT} ist der TCP Port des Servers welcher die Datenbank hostet.
+		\item \textbf{JWT\_SECRET} ist das Passwort mit dem alle JWT Tokens ausgestellt werden.
+		\item \textbf{JWT\_ACCESS\_EXPIRATION\_MINUTES} gibt die Dauer der Gültigkeit eines Access-Tokens an (in Minuten)
+		\item \textbf{JWT\_REFRESH\_EXPIRATION\_DAYS} gibt die Dauer der Gültigkeit eines Refresh-Tokens an (in Tagen)
+		\item \textbf{SMTP\_HOST} ist der hostname/ip-adresse des EMail Servers
+		\item \textbf{SMTP\_PORT} ist der TCP Port des EMail Servers für SMTP
+		\item \textbf{SMTP\_USERNAME} ist der username des Benutzers zum einloggen in den EMail Account
+		\item \textbf{SMTP\_PASSWORD} ist das passwort des Benutzers zum einloggen in den EMail Account
+		\item \textbf{EMAIL\_FROM} gibt die Email adresse an, von welcher gesendet werden soll.
+		\item \textbf{EMAIL\_NAME} gibt den Namen an, welcher dem Empfänger angezeigt werden soll.
+	\end{enumerate}

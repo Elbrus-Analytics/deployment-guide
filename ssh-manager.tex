@@ -1,0 +1,149 @@
+% --------- deployment guide for the ssh manager ---------		
+	\subsection[file config]{Umgebung Konfigurieren}
+	\subsubsection{1 - Mit Setup Script}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Ausführen des 'install.sh' Scripts.}]
+		elbrus@server:~$ cd /var/elbrus
+		elbrus@server:~$ bash ssh-manager/src/install.sh
+		Do you want to proceed with the setup of the 'ssh-manager'? (y/n) y
+		we will proceed
+		
+		Where do you want the ssh config replies to be stored (dir) [/var/elbrus/
+		shared/ssh-configs]
+		Where is the 'main.py' file stored [/var/elbrus/ssh-manager/src/main.py]
+		Where is the shared config stored [/var/elbrus/shared/.config]
+		
+		Do you want to store the config files at '/var/elbrus/shared/ssh-configs'?
+		Is your 'main.py' stored at '/var/elbrus/ssh-manager/src/main.py'?
+		Is the shared config stored at '/var/elbrus/shared/.config'? (y/n/exit) y
+		we will proceed
+		
+		#global
+		SHAREDCONFIG=/var/elbrus/shared/.config
+		
+		#values regarding the jumpserver:
+		#IP, PORT and USER values must be set!
+		#depending on the usage you can set either:
+		#   -PASS and KEYFILE: the keyfile is used, the pass is interpreted as the
+		passphrase
+		#   -only KEYFILE: the keyfile is used
+		#   -only PASS: the password is used as is regular credentials
+		JUMPSERVER_IP=
+		JUMPSERVER_PORT=
+		JUMPSERVER_USER=
+		JUMPSERVER_PASS=
+		SSH_KEYFILE=
+		
+		#paths
+		CONFIGPATH=/var/elbrus/shared/ssh-configs
+		MAINPATH=/var/elbrus/ssh-manager/src/main.py
+		
+		Do you want to run the setup script? (y/n/exit) y
+		...
+		Initialized empty Git repository in /var/elbrus/shared/ssh-configs/.git/
+		info: created config folder!
+		Install dependencies ...
+		...
+		Cleaning up...
+		elbrus@server:~/ssh-manager$
+	\end{lstlisting}
+	\newpage
+	
+	\lstset{style=files}
+	\begin{lstlisting}[caption={Ergänzen der fehlenden Werten in '.env'.}, language=bash]
+		#values regarding the jumpserver:
+		#IP, PORT and USER values must be set!
+		#depending on the usage you can set either:
+		#   -PASS and KEYFILE: the keyfile is used, the pass is interpreted as the passphrase
+		#   -only KEYFILE: the keyfile is used
+		#   -only PASS: the password is used as is regular credentials
+		JUMPSERVER_IP=
+		JUMPSERVER_PORT=
+		JUMPSERVER_USER=
+		JUMPSERVER_PASS=
+		SSH_KEYFILE=
+	\end{lstlisting}
+	
+	\subsubsection{2 - Ohne Setup Script}
+	
+	\lstset{style=files}
+	\begin{lstlisting}[caption={Anhand von '.env.example' eigene '.env' Datei anlegen.}, language=bash]
+		#global
+		SHAREDCONFIG=/var/elbrus/shared/.config
+		
+		#values regarding the jumpserver:
+		#IP, PORT and USER values must be set!
+		#depending on the usage you can set either:
+		#   -PASS and KEYFILE: the keyfile is used, the pass is interpreted as the passphrase
+		#   -only KEYFILE: the keyfile is used
+		#   -only PASS: the password is used as is regular credentials
+		JUMPSERVER_IP=
+		JUMPSERVER_PORT=
+		JUMPSERVER_USER=
+		JUMPSERVER_PASS=
+		SSH_KEYFILE=
+		
+		#paths
+		CONFIGPATH=/var/elbrus/shared/ssh-configs
+		MAINPATH=/var/elbrus/ssh-manager/src/main.py
+	\end{lstlisting}
+	
+	\lstset{style=commands}	
+	\begin{lstlisting}[caption={Ausführen des Scripts zur Initialisierung des VCS Verzeichnisses.}]
+		elbrus@server:~/var/elbrus/ssh-manager$ bash src/setup.sh
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Installieren von fehlenden python3 Packages.}]
+		elbrus@server:~/var/elbrus/ssh-manager$ pip3 install -r requirements.txt
+	\end{lstlisting}
+	\newpage
+	
+	\subsection[systemd service]{Der Systemd Service}
+	
+	\lstset{style=files}
+	\begin{lstlisting}[caption={ssh-manager.service.example - Die Variable 'WorkingDirectory' sowie die Variable 'User' anpassen.},language=bash ,keywords={WorkingDirectory, User}, keywordstyle=\color{red}, firstnumber=5]
+		...
+		#job is starting immediatly after the start action has been called
+		Type=simple
+		#the user to execute the script
+		User=elbrus
+		#the working directory
+		WorkingDirectory=/var/elbrus/ssh-manager/src/
+		#which script should be executed
+		ExecStart=/bin/bash routine.sh
+		...
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Kopieren des Serviceprogrammes.}]
+		elbrus@server:~/var/elbrus$ sudo cp ssh-manager/src/ssh-manager.service.example\
+		/etc/systemd/system/ssh-manager.service
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Kopieren des Zeitplanungsprogrammes.}]
+		elbrus@server:~/var/elbrus$ sudo cp ssh-manager/src/ssh-manager-schedule.timer.example\
+		/etc/systemd/system/ssh-manager-schedule.timer
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Neuladen des 'systemctl' Deamons.}]
+		elbrus@server:~/var/elbrus$ sudo systemctl daemon-reload
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Aktivieren des Serviceprogrammes.}]
+		elbrus@server:~/var/elbrus$ sudo systemctl enable ssh-manager.service
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Aktivieren des Zeitplanungsprogrammes.}]
+		elbrus@server:~/var/elbrus$ sudo systemctl enable ssh-manager-schedule.timer
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Starten des Zeitplanungsprogrammes.}]
+		elbrus@server:~/var/elbrus$ sudo systemctl start ssh-manager-schedule.timer
+	\end{lstlisting}

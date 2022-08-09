@@ -1,0 +1,87 @@
+% --------- deployment guide for the snmp manager ---------		
+	\subsection[file config]{Umgebung Konfigurieren}
+	\subsubsection{1 - Mit Setup Script}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Ausführen des 'install.sh' Scripts.}]
+		elbrus@server:~$ cd /var/elbrus
+		elbrus@server:~/var/elrbus$ bash snmp-manager/src/install.sh
+		Do you want to proceed with setup of the 'snmp-manager'? (y/n) y
+		
+		Where should the log be stored (dir) [/var/elbrus/shared/log]:
+		Where is the shared config stored [/var/elbrus/shared/.config]:
+		
+		Should the log be stored at '/var/elbrus/shared/log' ?
+		Is the shared config stored at '/var/elbrus/shared/.config' ? (y/n/exit) y
+		#global
+		SHAREDCONFIG=/var/elbrus/shared/.config
+		
+		#paths
+		LOGFILEDIR=/var/elbrus/snmp-manager/log
+		Install dependencies ...
+		
+		...
+		
+		Cleaning up...
+		elbrus@server:~/var/elrbus/snmp-manager$
+	\end{lstlisting}
+	
+	\subsubsection{2 - Ohne Setup Script}
+	
+	\lstset{style=files}
+	\begin{lstlisting}[caption={Anhand von '.env.example' eigene '.env' Datei anlegen.}, language=bash, keywords={CONFIGPATH, MAINPATH}, keywordstyle=\color{red}]
+		#global
+		SHAREDCONFIG=/var/elbrus/shared/.config
+		
+		#paths
+		LOGFILEDIR=/var/elbrus/shared/log
+	\end{lstlisting}
+	\newpage
+	
+	\subsection[systemd service]{Der Systemd Service}
+	
+	\lstset{style=files}
+	\begin{lstlisting}[caption={snmp-manager.service.example - Die Variable 'WorkingDirectory' sowie die Variable 'User' anpassen.},language=bash ,keywords={WorkingDirectory, User}, keywordstyle=\color{red}, firstnumber=5]
+		...
+		#job is starting immediatly after the start action has been called
+		Type=simple
+		#the user to execute the script
+		User=elbrus
+		#the working directory
+		WorkingDirectory=/var/elbrus/snmp-manager/src
+		#which script should be executed
+		ExecStart=/bin/bash elb-snmp-manager.sh
+		...
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Kopieren des Serviceprogrammes.}]
+		elbrus@server:~/var/elbrus$ sudo cp snmp-manager/src/snmp-manager.service\
+		.example /etc/systemd/system/snmp-manager.service
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Kopieren des Zeitplanungsprogrammes.}]
+		elbrus@server:~/var/elbrus$ sudo cp snmp-manager/src/snmp-manager-schedule.timer\
+		.example /etc/systemd/system/snmp-manager-schedule.timer
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Neuladen des 'systemctl' Deamons.}]
+		elbrus@server:~/var/elbrus$ sudo systemctl daemon-reload
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Aktivieren des Serviceprogrammes.}]
+		elbrus@server:~/var/elbrus$ sudo systemctl enable snmp-manager.service
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Aktivieren des Zeitplanungsprogrammes.}]
+		elbrus@server:~/var/elbrus$ sudo systemctl enable snmp-manager-schedule.timer
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Starten des Zeitplanungsprogrammes.}]
+		elbrus@server:~/var/elbrus$ sudo systemctl start snmp-manager-schedule.timer
+	\end{lstlisting}

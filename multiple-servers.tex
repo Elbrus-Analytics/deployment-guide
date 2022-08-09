@@ -1,0 +1,31 @@
+	\subsection{SSH-Keys}
+	Weil der pcap-importer und der report-generator auf zwei verschiedenen Server liegen könnten, muss für die Kommunikation zwischen jenen Sever SSH-Funktionieren.
+	\newline\newline
+	Dieser Schritt kann übersprungen werden wenn alles auf einem Server installiert wird.
+	
+	\lstset{style=commands}
+	\subsubsection{Capture-Server}
+	\begin{lstlisting}[caption={Anlegen der SSH-Keys.}]
+		elbrus@server:~$ mkdir -p /var/elbrus/shared/.ssh/
+		elbrus@server:~$ ssh-keygen -t ecdsa -b 256 -f \
+		/var/elbrus/shared/.ssh/id_report_generator_connection -N ''
+	\end{lstlisting}
+	
+	\begin{lstlisting}[caption={Übertragen der SSH-Keys auf den Database-Server.}]
+		elbrus@server:~$ ssh-copy-id -i \
+		/var/elbrus/shared/.ssh/id_report_generator_connection.pub \
+		elbrus@10.0.76.220
+	\end{lstlisting}
+	
+	\subsubsection{Database-Server}
+	\begin{lstlisting}[caption={Anlegen der SSH-Keys.}]
+		elbrus@server:~$ mkdir -p /var/elbrus/shared/.ssh/
+		elbrus@server:~$ ssh-keygen -t ecdsa -b 256 -f \
+		/var/elbrus/shared/.ssh/id_capture_connection -N ''
+	\end{lstlisting}
+	
+	\begin{lstlisting}[caption={Übertragen der SSH-Keys auf den Capture-Server.}]
+		elbrus@server:~$ ssh-copy-id -i \
+		/var/elbrus/shared/.ssh/id_capture_connection.pub \
+		elbrus@10.0.76.217
+	\end{lstlisting}

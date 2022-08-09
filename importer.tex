@@ -1,0 +1,58 @@
+% --------- deployment guide for the importer ---------	
+	\subsection[file config]{Umgebung Konfigurieren}
+	\subsubsection{1 - Mit Setup Script}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Ausführen des 'install.sh' Scripts.}, breaklines=true,]
+		elbrus@server:~$ cd /var/elbrus
+		elbrus@server:~/var/elbrus$ bash database/importer/pcap-importer/\
+		install.sh
+		Do you want to proceed? (y/n) y
+		
+		Where is the shared config stored [/var/elbrus/shared/.config]: 
+		Where should the 'pcap-importer' (dir) be stored [/var/elbrus/pcap-importer]: 
+		
+		Would you like to store the 'pcap-importer' at '/var/elbrus/pcap-importer' ?
+		Is the shared config stored at '/var/elbrus/shared/.config' ? (y/n/exit) y
+		Submodule 'importer/pcap-importer/pcap-analyzer' (https://github.com/rusticata/pcap-analyzer.git) registered for path 'importer/pcap-importer/pcap-analyzer'
+		Cloning into '/var/elbrus/database/importer/pcap-importer/pcap-analyzer'...
+		Submodule path 'importer/pcap-importer/pcap-analyzer': checked out '26abc0b0f4d9b2f0e6a72a62e694cd60ae6b6011'
+		Start Building ... (this may take a while)
+		<@\textcolor{codegreen}{Compiling}@> proc-macro2 v1.0.38
+		<@\textcolor{codegreen}{Compiling}@> unicode-xid v0.2.3
+		<@\textcolor{codegreen}{Compiling}@> syn v1.0.93
+		...
+		<@\textcolor{codegreen}{Compiling}@> libpcap-tools v0.1.0 (/var/elbrus/database/importer/pcap-importer/pcap-analyzer/libpcap-tools)
+		<@\textcolor{codegreen}{Compiling}@> tokio-postgres v0.7.6
+		<@\textcolor{codegreen}{Compiling}@> pcap-importer v0.1.0 (/var/elbrus/database/importer/pcap-importer)
+		Finished release [optimized] target(s) in 1m 38s
+		Cleaning up...
+		elbrus@server:~/var/elbrus$
+	\end{lstlisting}
+	\newpage
+	
+	\subsubsection{2 - Ohne Setup Script}	
+	
+	\lstset{style=files}
+	\begin{lstlisting}[caption={Anhand von '.env.example' eigene '.env' Datei anlegen.}, language=bash]
+		#global
+		SHAREDCONFIG=/var/elbrus/shared/.config
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Updaten der git Submodule.}]
+		elbrus@server:~/var/elbrus$ git -C database submodule update --init
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Kompilieren des 'pcap-importers'.}]
+		elbrus@server:~/var/elbrus$ cargo build --release --manifest-path \
+		database/importer/pcap-importer/Cargo.toml
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Kopieren des 'pcap-importers' in ein eigenes Verzeichniss.}]
+		elbrus@server:~/var/elbrus$ mkdir -p /var/elbrus/pcap-importer
+		elbrus@server:~/var/elbrus$ mv database/importer/pcap-importer/target/\
+		release/pcap-importer /var/elbrus/pcap-importer/pcap-importer
+	\end{lstlisting}
