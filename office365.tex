@@ -5,7 +5,7 @@
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Ausführen des 'install.sh' Scripts.}]
 		elbrus@server:~$ cd /var/elbrus
-		elbrus@server:~$ bash install.sh
+		elbrus@server:~$ bash office365-analyzer/src/install.sh
 		Do you want to proceed with setup of the 'office365-analyzer'? (y/n) y
 		
 		Where should the log be stored (dir) [/var/elbrus/shared/log]:
@@ -62,32 +62,32 @@
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Kopieren des Serviceprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo cp office365-analyzer/src/office365-get-endpoints\
+		elbrus@server:/var/elbrus$ sudo cp office365-analyzer/src/office365-get-endpoints\
 		.service.example /etc/systemd/system/office365-get-endpoints.service
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Kopieren des Zeitplanungsprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo cp office365-analyzer/src/office365-get-endpoints\
+		elbrus@server:/var/elbrus$ sudo cp office365-analyzer/src/office365-get-endpoints\
 		-schedule.timer.example /etc/systemd/system/office365-get-endpoints-schedule.timer
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Neuladen des 'systemctl' Deamons.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl daemon-reload
+		elbrus@server:/var/elbrus$ sudo systemctl daemon-reload
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Aktivieren des Serviceprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl enable office365-get-endpoints.service
+		elbrus@server:/var/elbrus$ sudo systemctl enable office365-get-endpoints.service
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Aktivieren des Zeitplanungsprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl enable office365-get-endpoints-schedule.timer
+		elbrus@server:/var/elbrus$ sudo systemctl enable office365-get-endpoints-schedule.timer
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Starten des Zeitplanungsprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl start office365-get-endpoints-schedule.timer
+		elbrus@server:/var/elbrus$ sudo systemctl start office365-get-endpoints-schedule.timer
 	\end{lstlisting}

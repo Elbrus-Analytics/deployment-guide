@@ -1,13 +1,47 @@
 % --------- deployment guide for the capture ---------
-	\subsection{Voraussetzungen}
+	
+	\subsection[file config]{Umgebung Konfigurieren}
+	\subsubsection{1 - Mit Setup Script}
 	
 	\lstset{style=commands}
-	\begin{lstlisting}[caption={Installieren von 'tcpdump' für das aufzeichnen von Daten.}]
-		elbrus@server:~$ sudo dnf install tcpdump
+	\begin{lstlisting}[caption={Ausführen des 'install.sh' Scripts.}, breaklines=true,]
+		elbrus@server:~$ cd /var/elbrus
+		elbrus@server:/var/elbrus$ sudo bash capture-device/install.sh
+		Do you want to proceed with setup of the 'capture-device'? (y/n) y
+		
+		Where should the log be stored (dir) [/var/elbrus/shared/log]:
+		Where is the elb-capture-postrotate.sh stored [/var/elbrus/capture-device/scripts/elb-capture-postrotate.sh]:
+		Where is the shared config stored [/var/elbrus/shared/.config]:
+		Where should the capture-device be stored [/var/elbrus/capture-device/target/release/aragog]:
+		
+		Should the log be stored at '/var/elbrus/shared/log' ?
+		Is the 'elb-capture-postrotate.sh' stored at '/var/elbrus/capture-device/scripts/elb-capture-postrotate.sh' ?
+		Is the shared config stored at '/var/elbrus/shared/.config' ?
+		Should the capture-device be stared at '/var/elbrus/capture-device/target/release/aragog' ? (y/n/exit) y
+		
+		...
+		
+		#global
+		SHAREDCONFIG=/var/elbrus/shared/.config
+		
+		#path
+		POSTROTATESCRIPT=/var/elbrus/capture-device/target/release/scripts/elb-capture-postrotate.sh
+		LOGFILEDIR=/var/elbrus/capture/
+		CAPTUREPATH=/var/elbrus/capture-device/target/release/aragog
+		
+		#settings
+		TIMEPERCAPTURE=900
+		MAXFILES=10
+		INTERFACE=eth0
+		Cleaning up...
+		elbrus@server:/var/elbrus$
 	\end{lstlisting}
+	\newpage
+	
+	\subsubsection{2 - Ohne Setup Script}
 	
 	\lstset{style=commands}
-	\begin{lstlisting}[caption={Anlegen eines Users der Berechtigungen zum ausführen von 'tcpdump' erhält.}]
+	\begin{lstlisting}[caption={Anlegen eines Users der Berechtigungen zum ausführen des 'capture-device' erhält.}]
 		elbrus@server:~$ sudo useradd aragog
 	\end{lstlisting}
 	
@@ -15,63 +49,14 @@
 	\begin{lstlisting}[caption={Hinzufügen von User 'aragog' zu Gruppe 'elbrus'.}]
 		elbrus@server:~$ sudo usermod -aG elbrus aragog
 	\end{lstlisting}
-	
+
 	\lstset{style=commands}
-	\begin{lstlisting}[caption={Zuweisen von 'tcpdump' zu der Gruppe 'aragog'.}]
-		elbrus@server:~$ sudo chgrp aragog /usr/sbin/tcpdump
+	\begin{lstlisting}[caption={Wechseln des Owners \& der Berechtigung auf '/var/elbrus/capture-device/'}]
+		elbrus@server:/var/elbrus$ sudo chown -R aragog:aragog /var/elbrus/capture-device/
+		elbrus@server:/var/elbrus$ sudo chmod -R 770 /var/elbrus/capture-device/
+		elbrus@server:/var/elbrus$ sudo chmod 777 /var/elbrus/capture-device/
+		elbrus@server:/var/elbrus$ sudo chmod 777 /var/elbrus/capture-device/install.sh
 	\end{lstlisting}
-	
-	\lstset{style=commands}
-	\begin{lstlisting}[caption={Ändern der Berechtigungen auf 'tcpdump'.}]
-		elbrus@server:~$ sudo chmod 750 /usr/sbin/tcpdump
-		elbrus@server:~$ sudo setcap cap_net_raw,cap_net_admin=eip \
-		/usr/sbin/tcpdump
-	\end{lstlisting}
-	
-	\lstset{style=commands}
-	\begin{lstlisting}[caption={Wechseln des Owners \& der Berechtigung auf '/var/elbrus/capture/'}]
-		elbrus@server:~$ sudo chown -R aragog:aragog /var/elbrus/capture/
-		elbrus@server:~$ sudo chmod -R 770 /var/elbrus/capture/
-		elbrus@server:~$ sudo chmod 777 /var/elbrus/capture/
-	\end{lstlisting}
-	
-	\lstset{style=commands}
-	\begin{lstlisting}caption={Ändern der Berechtigung auf '/var/elbrus/capture/install.sh'
-		elbrus@server:~/var/elbrus$ sudo chmod 777 /var/elbrus/capture/install.sh
-	\end{lstlisting}
-	\newpage
-	
-	\subsection[file config]{Umgebung Konfigurieren}
-	\subsubsection{1 - Mit Setup Script}
-	
-	\lstset{style=commands}
-	\begin{lstlisting}[caption={Ausführen des 'install.sh' Scripts.}, breaklines=true,]
-		elbrus@server:~/var/elbrus$ bash capture/install.sh
-		Do you want to proceed with setup of the 'capture-device'? (y/n) y
-		
-		Where should the log be stored (dir) [/var/elbrus/shared/log]:
-		Where is the elb-capture-postrotate.sh stored [/var/elbrus/capture/elb-capture-postrotate.sh]:
-		Where is the shared config stored [/var/elbrus/shared/.config]:
-		
-		Should the log be stored at '/var/elbrus/shared/log' ?
-		Is the 'elb-capture-postrotate.sh' stored at '/var/elbrus/capture/elb-capture-postrotate.sh' ?
-		Is the shared config stored at '/var/elbrus/shared/.config' ? (y/n/exit) y
-		#global
-		SHAREDCONFIG=/var/elbrus/shared/.config
-		
-		#paths
-		POSTROTATESCRIPT=/var/elbrus/capture/elb-capture-postrotate.sh
-		LOGFILE=/var/elbrus/shared/log
-		
-		#settings
-		TIMEPERCAPTURE=900
-		MAXFILES=10
-		INTERFACE=eth0
-		Cleaning up...
-		elbrus@server:~/var/elbrus$
-	\end{lstlisting}
-	
-	\subsubsection{2 - Ohne Setup Script}
 	
 	\lstset{style=files}
 	\begin{lstlisting}[caption={Anhand von '.env.example' eigene '.env' Datei anlegen.}, language=bash]
@@ -80,12 +65,29 @@
 		
 		#path
 		POSTROTATESCRIPT=/var/elbrus/capture/elb-capture-postrotate.sh
-		LOGFILEDIR=/var/elbrus/capture/capture"-$(date +"%Y-%U")".log
+		LOGFILEDIR=/var/elbrus/capture/
+		CAPTUREPATH=/var/elbrus/capture-device/target/release/aragog
 		
 		#settings
 		TIMEPERCAPTURE=900
 		MAXFILES=10
 		INTERFACE=eth0
+	\end{lstlisting}
+
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Kompilieren des 'capture-device'.}]
+		elbrus@server:~$ sudo ln -s /usr/lib64/libpcap.so.1 /usr/lib64/libpcap.so
+		elbrus@server:~$ cd /var/elbrus/capture-device
+		elbrus@server:/var/elbrus/capture-device$ cargo build --release 
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Erteilen der Berechtigung zum Aufzeichenen von Packages.}]
+		elbrus@server:/var/elbrus/capture-device$ cd /var/elbrus
+		elbrus@server:/var/elbrus$ sudo chmod 750 \
+		/var/elbrus/capture-device/target/release/aragog
+		elbrus@server:/var/elbrus$ sudo setcap cap_net_raw,cap_net_admin=eip \
+		/var/elbrus/capture-device/target/release/aragog
 	\end{lstlisting}
 	\newpage
 	
@@ -115,21 +117,21 @@
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Kopieren des Serviceprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo cp capture/capture.service.example\
+		elbrus@server:/var/elbrus$ sudo cp capture-device/scripts/capture.service.example\
 		/etc/systemd/system/capture.service
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Neuladen des 'systemctl' Deamons.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl daemon-reload
+		elbrus@server:/var/elbrus$ sudo systemctl daemon-reload
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Aktivieren des Serviceprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl enable capture.service
+		elbrus@server:/var/elbrus$ sudo systemctl enable capture.service
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Starten des Serviceprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl start capture.service
+		elbrus@server:/var/elbrus$ sudo systemctl start capture.service
 	\end{lstlisting}

@@ -57,32 +57,32 @@
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Kopieren des Serviceprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo cp uptime_monitor/uptime_monitor.service.example\
+		elbrus@server:/var/elbrus$ sudo cp uptime_monitor/uptime_monitor.service.example \
 		/etc/systemd/system/uptime_monitor.service
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Kopieren des Zeitplanungsprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo cp uptime_monitor/uptime_monitor-schedule.timer.example\
+		elbrus@server:/var/elbrus$ sudo cp uptime_monitor/uptime_monitor-schedule.timer.example \
 		/etc/systemd/system/uptime_monitor-schedule.timer
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Neuladen des 'systemctl' Deamons.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl daemon-reload
+		elbrus@server:/var/elbrus$ sudo systemctl daemon-reload
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Aktivieren des Serviceprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl enable uptime_monitor.service
+		elbrus@server:/var/elbrus$ sudo systemctl enable uptime_monitor.service
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Aktivieren des Zeitplanungsprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl enable uptime_monitor-schedule.timer
+		elbrus@server:/var/elbrus$ sudo systemctl enable uptime_monitor-schedule.timer
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Starten des Zeitplanungsprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl start uptime_monitor-schedule.timer
+		elbrus@server:/var/elbrus$ sudo systemctl start uptime_monitor-schedule.timer
 	\end{lstlisting}

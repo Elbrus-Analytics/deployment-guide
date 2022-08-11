@@ -46,7 +46,7 @@
 		Install dependencies ...
 		...
 		Cleaning up...
-		elbrus@server:~/ssh-manager$
+		elbrus@server:/ssh-manager$
 	\end{lstlisting}
 	\newpage
 	
@@ -91,12 +91,12 @@
 	
 	\lstset{style=commands}	
 	\begin{lstlisting}[caption={Ausführen des Scripts zur Initialisierung des VCS Verzeichnisses.}]
-		elbrus@server:~/var/elbrus/ssh-manager$ bash src/setup.sh
+		elbrus@server:/var/elbrus/ssh-manager$ bash src/setup.sh
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Installieren von fehlenden python3 Packages.}]
-		elbrus@server:~/var/elbrus/ssh-manager$ pip3 install -r requirements.txt
+		elbrus@server:/var/elbrus/ssh-manager$ pip3 install -r requirements.txt
 	\end{lstlisting}
 	\newpage
 	
@@ -118,32 +118,32 @@
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Kopieren des Serviceprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo cp ssh-manager/src/ssh-manager.service.example\
+		elbrus@server:/var/elbrus$ sudo cp ssh-manager/src/ssh-manager.service.example \
 		/etc/systemd/system/ssh-manager.service
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Kopieren des Zeitplanungsprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo cp ssh-manager/src/ssh-manager-schedule.timer.example\
+		elbrus@server:/var/elbrus$ sudo cp ssh-manager/src/ssh-manager-schedule.timer.example \
 		/etc/systemd/system/ssh-manager-schedule.timer
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Neuladen des 'systemctl' Deamons.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl daemon-reload
+		elbrus@server:/var/elbrus$ sudo systemctl daemon-reload
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Aktivieren des Serviceprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl enable ssh-manager.service
+		elbrus@server:/var/elbrus$ sudo systemctl enable ssh-manager.service
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Aktivieren des Zeitplanungsprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl enable ssh-manager-schedule.timer
+		elbrus@server:/var/elbrus$ sudo systemctl enable ssh-manager-schedule.timer
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Starten des Zeitplanungsprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl start ssh-manager-schedule.timer
+		elbrus@server:/var/elbrus$ sudo systemctl start ssh-manager-schedule.timer
 	\end{lstlisting}

@@ -5,7 +5,7 @@
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Ausführen des 'install.sh' Scripts.}]
 		elbrus@server:~$ cd /var/elbrus
-		elbrus@server:~/var/elrbus$ bash snmp-manager/src/install.sh
+		elbrus@server:/var/elrbus$ bash snmp-manager/src/install.sh
 		Do you want to proceed with setup of the 'snmp-manager'? (y/n) y
 		
 		Where should the log be stored (dir) [/var/elbrus/shared/log]:
@@ -23,7 +23,7 @@
 		...
 		
 		Cleaning up...
-		elbrus@server:~/var/elrbus/snmp-manager$
+		elbrus@server:/var/elrbus/snmp-manager$
 	\end{lstlisting}
 	
 	\subsubsection{2 - Ohne Setup Script}
@@ -56,32 +56,32 @@
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Kopieren des Serviceprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo cp snmp-manager/src/snmp-manager.service\
+		elbrus@server:/var/elbrus$ sudo cp snmp-manager/src/snmp-manager.service\
 		.example /etc/systemd/system/snmp-manager.service
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Kopieren des Zeitplanungsprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo cp snmp-manager/src/snmp-manager-schedule.timer\
+		elbrus@server:/var/elbrus$ sudo cp snmp-manager/src/snmp-manager-schedule.timer\
 		.example /etc/systemd/system/snmp-manager-schedule.timer
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Neuladen des 'systemctl' Deamons.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl daemon-reload
+		elbrus@server:/var/elbrus$ sudo systemctl daemon-reload
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Aktivieren des Serviceprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl enable snmp-manager.service
+		elbrus@server:/var/elbrus$ sudo systemctl enable snmp-manager.service
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Aktivieren des Zeitplanungsprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl enable snmp-manager-schedule.timer
+		elbrus@server:/var/elbrus$ sudo systemctl enable snmp-manager-schedule.timer
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Starten des Zeitplanungsprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl start snmp-manager-schedule.timer
+		elbrus@server:/var/elbrus$ sudo systemctl start snmp-manager-schedule.timer
 	\end{lstlisting}

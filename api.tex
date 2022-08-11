@@ -3,13 +3,13 @@
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Installieren von 'pm2'.}]
-		elbrus@server:~/var/elbrus$ sudo npm install -g pm2
+		elbrus@server:/var/elbrus$ sudo npm install -g pm2
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Nachinstallieren der Abhängigkeiten.}]
-		elbrus@server:~/var/elbrus$ cd api
-		elbrus@server:~/var/elbrus/api$ sudo npm install
+		elbrus@server:/var/elbrus$ cd api
+		elbrus@server:/var/elbrus/api$ sudo npm install
 	\end{lstlisting}
 	\newpage
 	
@@ -51,7 +51,7 @@
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Starten der API.}]
-		elbrus@server:~/var/elbrus/api$ pm2 start ecosystem.config.json
+		elbrus@server:/var/elbrus/api$ pm2 start ecosystem.config.json
 	\end{lstlisting}
 	Die API läuft in folge automatisch im Hintergrund.
 	\newpage

@@ -45,7 +45,7 @@
 	\subsection[systemd service]{Der Systemd Service}
 	
 	\lstset{style=files}
-	\begin{lstlisting}[caption={uptime\_monitor.service.example - Die Variable 'WorkingDirectory' sowie die Variable 'User' anpassen.},language=bash ,keywords={WorkingDirectory, User}, keywordstyle=\color{red}, firstnumber=5]
+	\begin{lstlisting}[caption={geo-session-finder.service.example - Die Variable 'WorkingDirectory' sowie die Variable 'User' anpassen.},language=bash ,keywords={WorkingDirectory, User}, keywordstyle=\color{red}, firstnumber=5]
 		...
 		#job is starting immediatly after the start action has been called
 		Type=simple
@@ -60,32 +60,32 @@
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Kopieren des Serviceprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo cp geo_session_finder/src/geo-session-finder\
+		elbrus@server:/var/elbrus$ sudo cp geo_session_finder/src/geo-session-finder\
 		.service.example /etc/systemd/system/geo-session-finder.service
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Kopieren des Zeitplanungsprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo cp geo_session_finder/src/geo-session-finder-schedule\
+		elbrus@server:/var/elbrus$ sudo cp geo_session_finder/src/geo-session-finder-schedule\
 		.timer.example /etc/systemd/system/geo-session-finder-schedule.timer
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Neuladen des 'systemctl' Deamons.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl daemon-reload
+		elbrus@server:/var/elbrus$ sudo systemctl daemon-reload
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Aktivieren des Serviceprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl enable geo-session-finder.service
+		elbrus@server:/var/elbrus$ sudo systemctl enable geo-session-finder.service
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Aktivieren des Zeitplanungsprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl enable geo-session-finder-schedule.timer
+		elbrus@server:/var/elbrus$ sudo systemctl enable geo-session-finder-schedule.timer
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Starten des Zeitplanungsprogrammes.}]
-		elbrus@server:~/var/elbrus$ sudo systemctl start geo-session-finder-schedule.timer
+		elbrus@server:/var/elbrus$ sudo systemctl start geo-session-finder-schedule.timer
 	\end{lstlisting}
