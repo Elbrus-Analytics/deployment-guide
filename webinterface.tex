@@ -1,0 +1,110 @@
+% --------- deployment guide for the webinterface ---------		
+	\subsection{1 - Mit Setup Script}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Ausführen des 'install.sh' Scripts.}]
+		elbrus@server:~$ cd /var/elbrus
+		elbrus@server:/var/elbrus$ sudo bash webinterface/install.sh
+			Do you want to proceed with the setup of the 'webinterface'? (y/n) y
+			
+			Where should the 'webinterface' be stored [/var/elbrus/webinterface]:
+			
+			Do you want to store the 'webinterface' at '/var/elbrus/webinterface'? (y/n/exit)
+			 y
+			
+			info: installing dependencies:
+			
+			info: installing nginx
+			info: installed nginx
+			
+			What is your baseurl (eg. 'http://1.2.3.4:3000/v1/' )? http://1.2.3.4/3000/v1/
+			
+			Is your baseurl 'http://1.2.3.4/3000/v1/'? (y/n/exit) y
+			
+			
+			Success! .env file was created.
+			
+			
+			info: building frontend
+			
+			> elbrus-webinterface@0.1.0 build /var/elbrus/webinterface
+			> vue-cli-service build
+			
+			
+			.:  Building for production...
+			
+			...
+			
+			info: built frontend
+			info: overwriting nginx config. Your previous nginx config is stored as
+			'nginx.conf.be'.
+			info: starting nginx.
+			Success: webinterface is now running at 'http://your-ip:80/'.
+		elbrus@server:/var/elbrus$
+	\end{lstlisting}
+	\newpage
+	
+	\subsection{2 - Ohne Setup Script}
+	
+	\subsubsection[file config]{Umgebung Konfigurieren}
+	\lstset{style=files}
+	\begin{lstlisting}[caption={Anhand von '.env.example' eigene '.env' Datei anlegen.}, language=bash, keywords={CONFIGPATH, MAINPATH}, keywordstyle=\color{red}]
+		VUE_APP_BASEURL=http://localhost:3000/v1/
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Compilieren des Webinterface.}]
+		elbrus@server:~$ cd /var/elbrus/webinterface
+		elbrus@server:/var/elbrus/webinterface$ sudo npm run build
+	\end{lstlisting}
+
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Kopieren des kompilierten Webinterfaces in der Ordner des Webservers.}]
+		elbrus@server:/var/elbrus/webinterface$ sudo cp -r dist/ /usr/share/nginx/html/
+	\end{lstlisting}
+
+	\lstset{style=files}
+	\begin{lstlisting}[caption={/etc/nginx/nginx.conf - Ändern der folgenden Zeilen.}, numbers=none, keepspaces=true]
+		<@\textcolor{red}{	- server \{ }@>
+		<@\textcolor{red}{	- 	listen       80 default\_server; }@>
+		<@\textcolor{red}{	-	listen       [::]:80 default\_server; }@>
+		<@\textcolor{red}{	-	server\_name  \_; }@>
+		<@\textcolor{red}{	-	root         /usr/share/nginx/html; }@>
+		<@\textcolor{red}{	-	\# Load configuration files for the default server block. }@>
+		<@\textcolor{red}{	-	include /etc/nginx/default.d/*.conf; }@>
+		<@\textcolor{red}{	-	location / \{ }@>
+		<@\textcolor{red}{	- \} }@>
+		
+		<@\textcolor{codegreen}{ + server \{ }@>
+		<@\textcolor{codegreen}{ +		listen       80 default\_server; }@>
+		<@\textcolor{codegreen}{ +		listen       [::]:80 default\_server; }@>
+		<@\textcolor{codegreen}{ +		server\_name  \_; }@>
+		<@\textcolor{codegreen}{ +		root         /usr/share/nginx/html/dist; }@>
+		<@\textcolor{codegreen}{ +		\# Load configuration files for the default server block. }@>
+		<@\textcolor{codegreen}{ +		include /etc/nginx/default.d/*.conf; }@>
+		<@\textcolor{codegreen}{ +		location / \{ }@>
+		<@\textcolor{codegreen}{ +	\} }@>
+		
+		<@\textcolor{red}{	-	error\_page 404 \/404.html; }@>
+		<@\textcolor{red}{	-			location = \/40x.html \{ }@>
+		<@\textcolor{red}{	-	\} }@>
+		
+		<@\textcolor{codegreen}{ + error\_page 404 = @elbrus; }@>
+		<@\textcolor{codegreen}{ + location @elbrus \{ }@>
+		<@\textcolor{codegreen}{ +	root  /usr/share/nginx/html/dist;}@>
+		<@\textcolor{codegreen}{ +	try\_files \$uri /index.html =502; }@>
+		<@\textcolor{codegreen}{ + \} }@>
+	\end{lstlisting}
+	\newpage
+
+	\subsection[systemd service]{Der Systemd Service}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Aktivieren des Webservers.}]
+		elbrus@server:/var/elbrus/webinterface$ sudo systemctl enable nginx
+	\end{lstlisting}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Starten des Webservers.}]
+		elbrus@server:/var/elbrus/webinterface$ sudo systemctl systemctl start nginx 
+	\end{lstlisting}

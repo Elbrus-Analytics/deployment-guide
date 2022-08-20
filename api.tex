@@ -1,18 +1,63 @@
 % --------- deployment guide for the API ---------		
-	\subsection{Voraussetzungen}
+	\subsection{1 - Mit Setup Script}
 	
 	\lstset{style=commands}
-	\begin{lstlisting}[caption={Installieren von 'pm2'.}]
-		elbrus@server:/var/elbrus$ sudo npm install -g pm2
+	\begin{lstlisting}[caption={Ausführen des 'install.sh' Scripts.}]
+		elbrus@server:~$ cd /var/elbrus
+		elbrus@server:/var/elbrus$ sudo bash api/install.sh
+		Do you want to proceed with the setup of the 'api'? (y/n) y
+		
+		Where should the 'api' be stored [/var/elbrus/api]:
+		Where is the shared config stored [/var/elbrus/shared/.config]:
+		
+		Is the shared config stored at '/var/elbrus/shared/.config'?
+		Do you want to store the 'api' at '/var/elbrus/api'? (y/n/exit) y
+		
+		info: installing dependencies
+		
+		...
+		
+		On which Port should the api run ['3000']? 3000
+		On which URL is the webinterface running? (e.g. http://1.2.3.4:80/) http://1.2.3.4:80/
+		
+		Is your webinterface running on 'http://1.2.3.4:80/'?
+		Should the api run on port '3000'? (y/n/exit) y
+		
+		info: Be aware if you skip you will have to enter the values manually in 
+		'/var/elbrus/api/.env' and run 'pm2 restart elb-api'
+		Do you want to configure the api email settings (y/skip/exit): y
+		What is your SMTP Host (e.g. smtp.gmail.com): smtp.gmail.com
+		What is your SMTP Port (e.g. 465): 465
+		What is your SMTP Username (e.g. elbrus): elbrus
+		What is your SMTP Password (e.g. ******): elbrus
+		Who should send the email (e.g. info@gmail.com): info@gmail.com
+		Which sender should be displayed (e.g ELBRUS SYSTEM): ELBRUS SYSTEM
+		Please check the following settings:
+		HOST: smtp.gmail.com
+		PORT: 465
+		USER: elbrus
+		PASSWORD: elbrus
+		EMAIL: info@gmail.com
+		DISPLAYNAME: ELBRUS SYSTEM
+		are these your settings? (y/n/exit) y
+		
+		<@\textcolor{codegreen}{Success!}@> .env file was created
+		
+		...
+		
+		elbrus@server:/var/elbrus$
 	\end{lstlisting}
+	\newpage
+	
+	\subsection{2 - Ohne Setup Script}
+	\subsection{Voraussetzungen}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Nachinstallieren der Abhängigkeiten.}]
 		elbrus@server:/var/elbrus$ cd api
 		elbrus@server:/var/elbrus/api$ sudo npm install
 	\end{lstlisting}
-	\newpage
-	
+
 	\subsection[file config]{Umgebung Konfigurieren}
 	
 	\lstset{style=files}
@@ -46,14 +91,6 @@
 		EMAIL_FROM=
 		EMAIL_NAME=
 	\end{lstlisting}
-	
-	\subsection{Inbetriebnahme}
-	
-	\lstset{style=commands}
-	\begin{lstlisting}[caption={Starten der API.}]
-		elbrus@server:/var/elbrus/api$ pm2 start ecosystem.config.json
-	\end{lstlisting}
-	Die API läuft in folge automatisch im Hintergrund.
 	\newpage
 	
 	\begin{enumerate}
@@ -75,3 +112,10 @@
 		\item \textbf{EMAIL\_FROM} gibt die Email adresse an, von welcher gesendet werden soll.
 		\item \textbf{EMAIL\_NAME} gibt den Namen an, welcher dem Empfänger angezeigt werden soll.
 	\end{enumerate}
+
+	\subsection{Inbetriebnahme}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Starten der API.}]
+		elbrus@server:/var/elbrus/api$ pm2 start ecosystem.config.json
+	\end{lstlisting}

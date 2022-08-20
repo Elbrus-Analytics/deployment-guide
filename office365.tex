@@ -5,26 +5,25 @@
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Ausführen des 'install.sh' Scripts.}]
 		elbrus@server:~$ cd /var/elbrus
-		elbrus@server:~$ bash office365-analyzer/src/install.sh
+		elbrus@server:~$ sudo bash office365-analyzer/src/install.sh
 		Do you want to proceed with setup of the 'office365-analyzer'? (y/n) y
 		
+		Where should the 'office365-analyzer' be stored (dir) [/var/elbrus/office365-analyzer]:
 		Where should the log be stored (dir) [/var/elbrus/shared/log]:
 		Where is the shared config stored [/var/elbrus/shared/.config]:
 		
+		Should the 'office365-analyzer' be stored at '/var/elbrus/office365-analyzer' ?
 		Should the log be stored at '/var/elbrus/shared/log' ?
 		Is the shared config stored at '/var/elbrus/shared/.config' ? (y/n/exit) y
-		#global
-		SHAREDCONFIG=/var/elbrus/shared/.config
 		
-		#paths
-		LOGFILEDIR=/var/elbrus/shared/log
+		<@\textcolor{codegreen}{Success!}@> .env file was created
+		<@\textcolor{codegreen}{Success!}@> systemd service was automatically deployed,
 		
-		#ms url
-		MS_URL=https://endpoints.office.com/endpoints/worldwide?clientrequestid=b10c5ed1-bad1-445
-		f-b386-b919946339a7
-		Install dependencies ...
+		info: installing dependencies.
 		
 		...
+		
+		info: installed dependencies.
 		
 		elbrus@server:~$	
 	\end{lstlisting}
@@ -88,6 +87,7 @@
 	\end{lstlisting}
 	
 	\lstset{style=commands}
-	\begin{lstlisting}[caption={Starten des Zeitplanungsprogrammes.}]
+	\begin{lstlisting}[caption={Starten des Serviceprogrammes \& Zeitplanungsprogrammes.}]
+		elbrus@server:/var/elbrus$ sudo systemctl start office365-get-endpoints.service
 		elbrus@server:/var/elbrus$ sudo systemctl start office365-get-endpoints-schedule.timer
 	\end{lstlisting}

@@ -1,72 +1,67 @@
 % --------- deployment guide for the ssh manager ---------		
-	\subsection[file config]{Umgebung Konfigurieren}
-	\subsubsection{1 - Mit Setup Script}
+	\subsection{1 - Mit Setup Script}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Ausführen des 'install.sh' Scripts.}]
 		elbrus@server:~$ cd /var/elbrus
-		elbrus@server:~$ bash ssh-manager/src/install.sh
+		elbrus@server:/var/elbrus$ sudo bash ssh-manager/src/install.sh 
 		Do you want to proceed with the setup of the 'ssh-manager'? (y/n) y
-		we will proceed
 		
-		Where do you want the ssh config replies to be stored (dir) [/var/elbrus/
-		shared/ssh-configs]
-		Where is the 'main.py' file stored [/var/elbrus/ssh-manager/src/main.py]
-		Where is the shared config stored [/var/elbrus/shared/.config]
+		Where do you want the ssh config replies to be stored (dir) 
+		[/var/elbrus/shared/ssh-configs]:
+		Where should the 'ssh-manager' be stored [/var/elbrus/ssh-manager]: 
+		Where is the shared config stored [/var/elbrus/shared/.config]:
 		
 		Do you want to store the config files at '/var/elbrus/shared/ssh-configs'?
-		Is your 'main.py' stored at '/var/elbrus/ssh-manager/src/main.py'?
+		Do you want to store the 'ssh-manager' at '/var/elbrus/ssh-manager'?
 		Is the shared config stored at '/var/elbrus/shared/.config'? (y/n/exit) y
-		we will proceed
 		
-		#global
-		SHAREDCONFIG=/var/elbrus/shared/.config
+		info: Be aware if you skip you will have to enter the values manually in
+		 '/var/elbrus/ssh-manager/.env'
+		Do you want to configure the jumphost settings (y/skip/exit): y
+		info: While configuring the credentials you can choose if you want to configure
+		) only the ssh-key   (leave password blank)   <-- only ssh keyfile is used to connect
+		) only the password  (leave ssh-key blank)    <-- only password is used to connect
+		) both                                        <-- keyfile is used with password as 
+		 passphrase
 		
-		#values regarding the jumpserver:
-		#IP, PORT and USER values must be set!
-		#depending on the usage you can set either:
-		#   -PASS and KEYFILE: the keyfile is used, the pass is interpreted as the
-		passphrase
-		#   -only KEYFILE: the keyfile is used
-		#   -only PASS: the password is used as is regular credentials
-		JUMPSERVER_IP=
-		JUMPSERVER_PORT=
-		JUMPSERVER_USER=
-		JUMPSERVER_PASS=
-		SSH_KEYFILE=
 		
-		#paths
-		CONFIGPATH=/var/elbrus/shared/ssh-configs
-		MAINPATH=/var/elbrus/ssh-manager/src/main.py
+		What is your Jumpserver IP (e.g. 1.2.3.4): 1.2.3.4
+		On which Port is the Jumpserver listening (e.g. 22): 22
+		What is your Jumpserver Username (e.g. elbrus): elburs
+		What is your Jumpserver Password (e.g. ******): elbrus
+		Where is your ssh-key located (e.g. /var/elbrus/shared/elbrus_key):
+		Please check the following settings:
+		HOST: 1.2.3.4
+		PORT: 22
+		USER: elburs
+		PASSWORD: elbrus
+		SSH-KEY:
+		are these your settings? (y/n/exit) y
+		Success! .env file was created, Please fill in the unfilled values.
+		Success! systemd service was automatically deployed,
+		info: installing dependencies.
+		info: installed dependencies.
+		
+		
+		<@\textcolor{codegreen}{Success!}@> .env file was created
+		<@\textcolor{codegreen}{Success!}@> systemd service was automatically deployed,
 		
 		Do you want to run the setup script? (y/n/exit) y
+		
 		...
-		Initialized empty Git repository in /var/elbrus/shared/ssh-configs/.git/
+		
 		info: created config folder!
-		Install dependencies ...
+		Installing dependencies ...
+	
 		...
-		Cleaning up...
-		elbrus@server:/ssh-manager$
+		
+		elbrus@server:/var/elbrus$
 	\end{lstlisting}
 	\newpage
 	
-	\lstset{style=files}
-	\begin{lstlisting}[caption={Ergänzen der fehlenden Werten in '.env'.}, language=bash]
-		#values regarding the jumpserver:
-		#IP, PORT and USER values must be set!
-		#depending on the usage you can set either:
-		#   -PASS and KEYFILE: the keyfile is used, the pass is interpreted as the passphrase
-		#   -only KEYFILE: the keyfile is used
-		#   -only PASS: the password is used as is regular credentials
-		JUMPSERVER_IP=
-		JUMPSERVER_PORT=
-		JUMPSERVER_USER=
-		JUMPSERVER_PASS=
-		SSH_KEYFILE=
-	\end{lstlisting}
-	
-	\subsubsection{2 - Ohne Setup Script}
-	
+	\subsection{2 - Ohne Setup Script}
+	\subsubsection[file config]{Umgebung Konfigurieren}
 	\lstset{style=files}
 	\begin{lstlisting}[caption={Anhand von '.env.example' eigene '.env' Datei anlegen.}, language=bash]
 		#global
@@ -100,7 +95,7 @@
 	\end{lstlisting}
 	\newpage
 	
-	\subsection[systemd service]{Der Systemd Service}
+	\subsubsection[systemd service]{Der Systemd Service}
 	
 	\lstset{style=files}
 	\begin{lstlisting}[caption={ssh-manager.service.example - Die Variable 'WorkingDirectory' sowie die Variable 'User' anpassen.},language=bash ,keywords={WorkingDirectory, User}, keywordstyle=\color{red}, firstnumber=5]

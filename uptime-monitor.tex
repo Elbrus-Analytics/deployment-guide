@@ -5,22 +5,18 @@
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Ausführen des 'install.sh' Scripts.}]
 		elbrus@server:~$ cd /var/elbrus
-		elbrus@server:~$ bash uptime_monitor/install.sh
-		Do you want to proceed with the setup of the 'uptime_monitor'? (y/n) y
-		we will proceed
+		elbrus@server:~$ sudo bash uptime-monitor/install.sh
+		Do you want to proceed with the setup of the 'uptime-monitor'? (y/n) y
 		
-		Where is the shared config stored [/var/elbrus/shared/.config]
+		Where is the shared config stored [/var/elbrus/shared/.config]:
+		Where should the 'uptime-monitor' be stored [/var/elbrus/uptime-monitor]:
 		
-		Is the shared config stored at '/var/elbrus/shared/.config'? (y/n/exit) y
-		we will proceed
+		Is the shared config stored at '/var/elbrus/shared/.config'?
+		Should the 'uptime-monitor be stored at '/var/elbrus/uptime-monitor'? (y/n/exit) y
 		
-		#global
-		SHAREDCONFIG=/var/elbrus/shared/.config
+		<@\textcolor{codegreen}{Success!}@> .env file was created
+		<@\textcolor{codegreen}{Success!}@> systemd service was automatically deployed,
 		
-		#config
-		INITIALPING=1
-		STATISTICPING=10
-		Cleaning up...
 		elbrus@server:~$
 	\end{lstlisting}
 	

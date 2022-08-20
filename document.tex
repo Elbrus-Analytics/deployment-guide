@@ -134,12 +134,26 @@
 	\begin{lstlisting}[caption={Installieren des Framworks 'Node.Js'.}]
 		elbrus@server:~$ sudo dnf -y module install nodejs:12
 	\end{lstlisting}
+
+	\subsubsection{Nginx}
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Installieren der Webserver-Software 'Nginx'.}]
+		elbrus@server:~$ sudo dnf -y install nginx
+	\end{lstlisting}
+
+	\subsubsection{Pm2}
+		\lstset{style=commands}
+	\begin{lstlisting}[caption={Installieren von 'pm2'.}]
+		elbrus@server:/var/elbrus$ sudo npm install -g pm2
+		elbrus@server:/var/elbrus$ sudo npm install --save luxon
+	\end{lstlisting}
 	
 	\subsubsection{Ablagestruktur}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Anlegen der Verzeichnissstruktur.}]
-		elbrus@server:~$ sudo mkdir /var/elbrus/shared/keys
+		elbrus@server:~$ sudo mkdir -p /var/elbrus/shared/keys
 		elbrus@server:~$ sudo chown -R elbrus:elbrus /var/elbrus
 		elbrus@server:~$ cd /var/elbrus
 		elbrus@server:/var/elbrus$ chmod -R 777 /var/elbrus/shared
@@ -165,15 +179,20 @@
 		elbrus@server:/var/elbrus/keys$ ssh-keygen -t rsa -b 2048 -f database_key -q -N ""
 	\end{lstlisting}
 
-	\lstset{style=commands}
-	\begin{lstlisting}[caption={Erstellen des SSH-keys der für das Herunterladen des 'Capture-Device' benötigt wird.}]
-		elbrus@server:/var/elbrus/keys$ ssh-keygen -t rsa -b 2048 -f capture_device_key -q -N ""
-	\end{lstlisting}
+	%\lstset{style=commands}
+	%\begin{lstlisting}[caption={Erstellen des SSH-keys der für das Herunterladen des %'Capture-Device' benötigt wird.}]
+	%	elbrus@server:/var/elbrus/keys$ ssh-keygen -t rsa -b 2048 -f capture_device_key -q -N ""
+	%\end{lstlisting}
+
+	%\lstset{style=commands}
+	%\begin{lstlisting}[caption={Erstellen des SSH-keys der für das Herunterladen des %'Report-Generator' benötigt wird.}]
+	%	elbrus@server:/var/elbrus/keys$ ssh-keygen -t rsa -b 2048 -f \
+	%	 report_generator_key -q -N ""
+	%\end{lstlisting}
 
 	\lstset{style=commands}
-	\begin{lstlisting}[caption={Erstellen des SSH-keys der für das Herunterladen des 'Report-Generator' benötigt wird.}]
-		elbrus@server:/var/elbrus/keys$ ssh-keygen -t rsa -b 2048 -f \
-		 report_generator_key -q -N ""
+	\begin{lstlisting}[caption={Erstellen des SSH-Keys der für das Herunterladen der Kernsoftware 'tabby' benötigt wird.}]
+		elbrus@server:/var/elbrus/keys$ ssh-keygen -t rsa -b 2048 -f tabby_key -q -N ""
 	\end{lstlisting}
 
 	\lstset{style=commands}
@@ -224,68 +243,70 @@
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Clonen der Datenbank Software.}]
-		elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/database.git\
-		 --config core.sshCommand="ssh -i /var/elbrus/shared/keys/database_key"
-	\end{lstlisting}
-	
-	\lstset{style=commands}
-	\begin{lstlisting}[caption={Clonen der 'Capture-Device' Software.}]
-		elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/capture-device.git\
-		 --config core.sshCommand="ssh -i /var/elbrus/shared/keys/capture_device_key"
+		elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/database.git \
+		--config core.sshCommand="ssh -i /var/elbrus/shared/keys/database_key"
 	\end{lstlisting}
 	
 	%\lstset{style=commands}
-	%\begin{lstlisting}[caption={Clonen der Packet-Importer Software}]
-	%	elbrus@server:/var/elbrus$ git clone https://github.com/\
-	%	Elbrus-Analytics/database.git
+	%\begin{lstlisting}[caption={Clonen der 'Capture-Device' Software.}]
+	%	elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/capture-device.git \
+	%	 --config core.sshCommand="ssh -i /var/elbrus/shared/keys/capture_device_key"
 	%\end{lstlisting}
 
+	%\lstset{style=commands}
+	%\begin{lstlisting}[caption={Clonen der 'Report-Generator' Software.}]
+	%	elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/\
+	%	report-generator.git --config core.sshCommand="ssh -i %/var/elbrus/shared/keys/report_generator_key"
+	%\end{lstlisting}
+	
 	\lstset{style=commands}
-	\begin{lstlisting}[caption={Clonen der 'Report-Generator' Software.}]
-		elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/\
-		report-generator.git --config core.sshCommand="ssh -i /var/elbrus/shared/keys/report_generator_key"
+	\begin{lstlisting}[caption={Clonen der Kernsoftware 'tabby'.}]
+		elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/tabby.git \
+		--config core.sshCommand="ssh -i /var/elbrus/shared/keys/tabby_key"
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Clonen der 'SNMP-Manager' Software.}]
-		elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/snmp-manager.git\
-		 --config core.sshCommand="ssh -i /var/elbrus/shared/keys/snmp_manager_key"
+		elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/snmp-manager.git \
+		--config core.sshCommand="ssh -i /var/elbrus/shared/keys/snmp_manager_key"
 	\end{lstlisting}
 
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Clonen der 'SSH-Manager' Software.}]
-		elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/ssh-manager.git\
-		 --config core.sshCommand="ssh -i /var/elbrus/shared/keys/ssh_manager_key"
+		elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/ssh-manager.git \
+		--config core.sshCommand="ssh -i /var/elbrus/shared/keys/ssh_manager_key"
 	\end{lstlisting}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Clonen der 'Uptime-Monitor' Software.}]
-		elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/uptime_monitor.git\
-		 --config core.sshCommand="ssh -i /var/elbrus/shared/keys/uptime_monitor_key"
+		elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/uptime-monitor.git \
+		--config core.sshCommand="ssh -i /var/elbrus/shared/keys/uptime_monitor_key"
 	\end{lstlisting}
 
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Clonen der 'geo session finders' Software.}]
-		elbrus@server:/var/elbrus/keys$ git clone git@github.com:Elbrus-Analytics/\
-		geo_session_finder.git --config core.sshCommand="ssh -i /var/elbrus/shared/keys/geo_session_finder_key"
+		elbrus@server:/var/elbrus/keys$  git clone git@github.com:Elbrus-Analytics/\
+		geo-session-finder.git --config core.sshCommand="ssh -i \
+		/var/elbrus/shared/keys/geo_session_finder_key"
 	\end{lstlisting}
 
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Clonen der 'office365-analyzer' Software.}]
 		elbrus@server:/var/elbrus/keys$ git clone git@github.com:Elbrus-Analytics/\
-		office365-analyzer.git --config core.sshCommand="ssh -i /var/elbrus/shared/keys/office365_analyzer_key"
+		office365-analyzer.git --config core.sshCommand="ssh -i \
+		/var/elbrus/shared/keys/office365_analyzer_key"
 	\end{lstlisting}
 	
 	\lstset{style=commands}
-	\begin{lstlisting}[caption={Clonen der API Software.}]
-		elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/api.git\
-		 --config core.sshCommand="ssh -i /var/elbrus/shared/keys/api_key"
+	\begin{lstlisting}[caption={Clonen der 'API' Software.}]
+		elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/api.git \
+		--config core.sshCommand="ssh -i /var/elbrus/shared/keys/api_key"
 	\end{lstlisting}
 
 	\lstset{style=commands}
-	\begin{lstlisting}[caption={Clonen der Packet-Importer Software}]
-		elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/webinterface.git\
-		 --config core.sshCommand="ssh -i /var/elbrus/shared/keys/webinterface_key"
+	\begin{lstlisting}[caption={Clonen der 'Webinterface' Software}]
+		elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/webinterface.git \
+		--config core.sshCommand="ssh -i /var/elbrus/shared/keys/webinterface_key"
 	\end{lstlisting}
 	\newpage
 	
@@ -294,7 +315,7 @@
 
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Ausführen des 'pythonSourceInstall.sh' Scripts.}]
-		elbrus@server:/var/elbrus$ sudo bash report-generator/pythonSourceInstall.sh
+		elbrus@server:/var/elbrus$ sudo bash ssh-manager/pythonSourceInstall.sh
 	\end{lstlisting}
 	
 	\subsubsection{2 - Manuel Installation}
@@ -411,20 +432,24 @@
 	\newpage
 	
 	% --------- CAPTURE ---------
-	\section{Aufzeichnen der Daten}
-	\input{capture.tex}
-	\newpage
+	%\section{Aufzeichnen der Daten}
+	%\input{capture.tex}
+	%\newpage
 	
 	% --------- PACKET CAPTURE IMPORTER ---------
-	\section{Packet Capture Importer}
-	\input{importer.tex}
-	\newpage
+	%\section{Packet Capture Importer}
+	%\input{importer.tex}
+	%\newpage
 	
 	% --------- REPORT GENERATOR ---------
-	\section{Report Generator}
-	\input{report-generator.tex}
-	\newpage
+	%\section{Report Generator}
+	%\input{report-generator.tex}
+	%\newpage
 	
+	% --------- TABBY ---------
+	\section{Kernsoftware - Tabby}
+	\input{tabby.tex}
+	\newpage
 	
 	% --------- SNMP MANAGER ---------
 	\section{SNMP Manager}
@@ -436,14 +461,14 @@
 	\input{ssh-manager.tex}
 	\newpage
 	
-	% --------- UPTIME MONITOR ---------
-	\section{Uptime Monitor}
-	\input{uptime-monitor.tex}
-	\newpage
-	
 	% --------- GEO SESSION FINDER ---------
 	\section{Geo Session finder}
 	\input{geo-session.tex}
+	\newpage
+	
+	% --------- UPTIME MONITOR ---------
+	\section{Uptime Monitor}
+	\input{uptime-monitor.tex}
 	\newpage
 	
 	% --------- office365 ---------
@@ -458,5 +483,6 @@
 	
 	% --------- Webinterface ---------
 	\section{Webinterface}
+	\input{webinterface.tex}
 	\newpage
 \end{document}
