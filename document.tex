@@ -64,7 +64,6 @@
 	\date{\today}
 	\maketitle
 	\newpage
-	
 	Bekanntes Problem: Beim herauskopieren von Befehlen wird das Apostrophe Zeichen falsch kopiert und führt zu Eingabe Störungen. Lösung: Apostrophe Zeichen des kopierten Befehls händisch im Terminal mit Apostrophe Zeichen austauschen. 
 	
 	\section[Server Infrastruktur]{Server Infrastruktur}
@@ -114,7 +113,6 @@
 	\begin{lstlisting}[caption={Wechseln zu User elbrus.}]
 		root@server:~$ su elbrus
 	\end{lstlisting}
-	\newpage
 	
 	\subsection{Initiale Server Konfiguration}
 
@@ -127,6 +125,77 @@
 	\begin{lstlisting}[caption={Installieren von dem 'firewalld' Service.}]
 		elbrus@server:~$ sudo dnf install firewalld
 	\end{lstlisting}
+	
+	\section{Voll automatisierte Installation}
+	bei Verwendung der voll automatisierten Installation kann das restliche Bereitstellungshandbuch übersprungen werden. Falls eine manuelle Installation bevorzugt wird kann dieser Abschnitt übersprungen werden.
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Installieren des 'generate-keys' Script.}]
+		elbrus@server:~$ sudo curl https://directory.anzola.at/Elbrus/generate-keys.sh
+	\end{lstlisting}
+
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Ausführen des 'generate-keys' Script.}]
+		elbrus@server:~$ sudo bash generate-keys.sh
+		Welchome to the setup of the 'elbrus analytics software'? (y/n) y
+		
+		starting to create ssh-keys to clone the github repositorys.
+		
+		Where should the ssh keys be stored (dir) [/var/elbrus/shared/key]:
+		Please confirm the key folder '/var/elbrus/shared/key'. (y/n/exit) y
+		
+		Creating ssh-keys:
+		[##########]
+		Please send the generated public keys to keys@Elbrus-Analytics.at.
+		elbrus@server:~$
+	\end{lstlisting}
+	
+	Bevor mit der Installation vorgefahren werden kann müssen die soeben angelegten SSH-Keys an "keys@Elbrus-Analytics.at" gesendet werden. Bitte beachten Sie, dass Ihre Email-Adresse Sie als berechtigten Nutzer ausweist.
+	\newpage
+	
+	\lstset{style=commands}
+	\begin{lstlisting}[caption={Installieren des 'install' Script.}]
+		elbrus@server:~$ sudo curl https://directory.anzola.at/Elbrus/install.sh
+	\end{lstlisting}
+
+	\begin{lstlisting}[caption={Ausführen des 'install' Script.}]
+		elbrus@server:~$ sudo bash install.sh
+		info: please make sure you run the script as 'elbrus', be aware 'elbrus' needs sudo 
+		permissions.
+		Do you want to proceed with the setup of the 'elbrus analytics software'? (y/n) y
+		
+		Where are the previously generated ssh keys stored (dir) [/var/elbrus/shared/key]:
+		Please confirm the key folder '/var/elbrus/shared/key'. (y/n/exit) y
+		
+		info: the 'elbrus analytics software' will be installed in '/var/elbrus'.
+		
+		info: installing the vcs git.
+		info: installed git.
+		
+		
+		Downloading the 'elbrus analytics software':
+		[##########]
+		
+		checking downloaded directorys:
+		<@\textcolor{codegreen}{Successfully}@> installed the 'database' software.
+		<@\textcolor{codegreen}{Successfully}@> installed the 'tabby' software.
+		<@\textcolor{codegreen}{Successfully}@> installed the 'snmp-manager' software.
+		<@\textcolor{codegreen}{Successfully}@> installed the 'ssh-manager' software.
+		<@\textcolor{codegreen}{Successfully}@> installed the 'uptime-monitor' software.
+		<@\textcolor{codegreen}{Successfully}@> installed the 'geo-session-finder' software.
+		<@\textcolor{codegreen}{Successfully}@> installed the 'office365-analyzer' software.
+		<@\textcolor{codegreen}{Successfully}@> installed the 'api' software.
+		<@\textcolor{codegreen}{Successfully}@> installed the 'webinterface' software.
+		
+		...
+		elbrus@server:~$
+	\end{lstlisting}
+	Im Falle von Unklarheiten bei Verwendung des 'install' Scripts kann bei jeder Teilinstallation im Bereitstellungshandbuch unter dem Abschnitt '1 - Mit Setup Script' der jeweilige Teilinstallation nachgeschlagen werden. Falls dies auch nicht behilflich ist überspringen Sie die jeweilige Teilinstallation und installieren Sie die jeweilige Teilinstallation manuell nach.
+	\newline \newline \newline \newline \newline \newline \newline \newline \newline \newline \newline
+	\textcolor{red}{Achtung!} Vergessen sie nicht in ihren Firewall Einstellungen die Ports für die API sowie das Webinteface frei zu geben.
+	\newpage
+	
+	\subsection{Software Abhängigkeiten}
 	
 	\subsubsection{Node.Js}
 	
@@ -485,4 +554,5 @@
 	\section{Webinterface}
 	\input{webinterface.tex}
 	\newpage
+	\textcolor{red}{Achtung!} Vergessen sie nicht in ihren Firewall Einstellungen die Ports für die API sowie das Webinteface frei zu geben.
 \end{document}
