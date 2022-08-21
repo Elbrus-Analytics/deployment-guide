@@ -71,12 +71,8 @@
 		# BASE URL
 		BASE=https://localhost:3000
 		
-		# URL of DB
-		DB_USER=
-		DB_HOST=
-		DB_DATABASE=
-		DB_PASSWORD=
-		DB_PORT=
+		# Path to the shared config
+		SHARED_CONFIG=/var/elbrus/shared/config.txt
 		
 		# JWT
 		JWT_SECRET=thisisasamplesecret
@@ -90,6 +86,9 @@
 		SMTP_PASSWORD=
 		EMAIL_FROM=
 		EMAIL_NAME=
+		
+		# Path where ssh-manager stores configs archive
+		VCS_Path=/var/elbrus/shared
 	\end{lstlisting}
 	\newpage
 	
