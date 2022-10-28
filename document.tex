@@ -167,7 +167,8 @@
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Installieren des 'generate-keys' Script.}]
-		elbrus@server:~$ sudo curl https://directory.anzola.at/Elbrus/generate-keys.sh
+		elbrus@server:~$ sudo curl -o generate-keys.sh \
+		https://directory.anzola.at/Elbrus/generate-keys.sh
 	\end{lstlisting}
 
 	\lstset{style=commands}
@@ -186,12 +187,12 @@
 		elbrus@server:~$
 	\end{lstlisting}
 	
-	Bevor mit der Installation vorgefahren werden kann müssen die soeben angelegten SSH-Keys an "keys@Elbrus-Analytics.at" gesendet werden. Bitte beachten Sie, dass Ihre Email-Adresse Sie als berechtigten Nutzer ausweist.
+	Bevor mit der Installation fortgefahren werden kann, müssen die soeben angelegten SSH-Keys an "keys@Elbrus-Analytics.at" gesendet werden. Bitte beachten Sie, dass Ihre Email-Adresse Sie als berechtigten Nutzer ausweist.
 	\newpage
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Installieren des 'install' Script.}]
-		elbrus@server:~$ sudo curl https://directory.anzola.at/Elbrus/install.sh
+		elbrus@server:~$ sudo curl -o install.sh https://directory.anzola.at/Elbrus/install.sh
 	\end{lstlisting}
 
 	\begin{lstlisting}[caption={Ausführen des 'install' Script.}]
