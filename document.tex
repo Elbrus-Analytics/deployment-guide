@@ -197,23 +197,21 @@
 
 	\begin{lstlisting}[caption={Ausführen des 'install' Script.}]
 		elbrus@server:~$ sudo bash install.sh
-		info: please make sure you run the script as 'elbrus', be aware 'elbrus' needs sudo 
-		permissions.
-		Do you want to proceed with the setup of the 'elbrus analytics software'? (y/n) y
+		Do you want to setup the 'elbrus analytics software'? (y/n) y
 		
 		Where are the previously generated ssh keys stored (dir) [/var/elbrus/shared/key]:
 		Please confirm the key folder '/var/elbrus/shared/key'. (y/n/exit) y
 		
 		info: the 'elbrus analytics software' will be installed in '/var/elbrus'.
+		info: downloading git.
+		info: downloaded git.
 		
-		info: installing the vcs git.
-		info: installed git.
+		---------------------------------------------
+		downloading the 'elbrus analytics software'
+		---------------------------------------------
 		
-		
-		Downloading the 'elbrus analytics software':
-		[##########]
-		
-		checking downloaded directorys:
+		info: checking downloaded directorys:
+		1
 		<@\textcolor{codegreen}{Successfully}@> installed the 'database' software.
 		<@\textcolor{codegreen}{Successfully}@> installed the 'tabby' software.
 		<@\textcolor{codegreen}{Successfully}@> installed the 'snmp-manager' software.
@@ -285,17 +283,6 @@
 		elbrus@server:/var/elbrus/keys$ ssh-keygen -t rsa -b 2048 -f database_key -q -N ""
 	\end{lstlisting}
 
-	%\lstset{style=commands}
-	%\begin{lstlisting}[caption={Erstellen des SSH-keys der für das Herunterladen des %'Capture-Device' benötigt wird.}]
-	%	elbrus@server:/var/elbrus/keys$ ssh-keygen -t rsa -b 2048 -f capture_device_key -q -N ""
-	%\end{lstlisting}
-
-	%\lstset{style=commands}
-	%\begin{lstlisting}[caption={Erstellen des SSH-keys der für das Herunterladen des %'Report-Generator' benötigt wird.}]
-	%	elbrus@server:/var/elbrus/keys$ ssh-keygen -t rsa -b 2048 -f \
-	%	 report_generator_key -q -N ""
-	%\end{lstlisting}
-
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Erstellen des SSH-Keys der für das Herunterladen der Kernsoftware 'tabby' benötigt wird.}]
 		elbrus@server:/var/elbrus/keys$ ssh-keygen -t rsa -b 2048 -f tabby_key -q -N ""
@@ -352,19 +339,7 @@
 		elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/database.git \
 		--config core.sshCommand="ssh -i /var/elbrus/shared/keys/database_key"
 	\end{lstlisting}
-	
-	%\lstset{style=commands}
-	%\begin{lstlisting}[caption={Clonen der 'Capture-Device' Software.}]
-	%	elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/capture-device.git \
-	%	 --config core.sshCommand="ssh -i /var/elbrus/shared/keys/capture_device_key"
-	%\end{lstlisting}
 
-	%\lstset{style=commands}
-	%\begin{lstlisting}[caption={Clonen der 'Report-Generator' Software.}]
-	%	elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/\
-	%	report-generator.git --config core.sshCommand="ssh -i %/var/elbrus/shared/keys/report_generator_key"
-	%\end{lstlisting}
-	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Clonen der Kernsoftware 'tabby'.}]
 		elbrus@server:/var/elbrus$ git clone git@github.com:Elbrus-Analytics/tabby.git \
@@ -417,14 +392,6 @@
 	\newpage
 	
 	\subsection{Python}
-	\subsubsection{1 - Automatische Installation}
-
-	\lstset{style=commands}
-	\begin{lstlisting}[caption={Ausführen des 'pythonSourceInstall.sh' Scripts.}]
-		elbrus@server:/var/elbrus$ sudo bash ssh-manager/pythonSourceInstall.sh
-	\end{lstlisting}
-	
-	\subsubsection{2 - Manuel Installation}
 	
 	\lstset{style=commands}
 	\begin{lstlisting}[caption={Installieren von benötigten Packeten und Abhängigkeiten.}]
@@ -522,11 +489,6 @@
 	\end{lstlisting}
 	\newpage
 	
-	% --------- Verbindung wenn Software auf verschiedene Server aufgeteilt ist ------------
-	%\section{SSH-Keys}
-	%\input{SSH-Keys.tex}
-	%\newpage
-	
 	% --------- DATENBANK ---------
 	\section{Datenbank}
 	\input{database.tex}
@@ -536,21 +498,6 @@
 	\section{Globale Konfiguration}
 	\input{global-configuration.tex}
 	\newpage
-	
-	% --------- CAPTURE ---------
-	%\section{Aufzeichnen der Daten}
-	%\input{capture.tex}
-	%\newpage
-	
-	% --------- PACKET CAPTURE IMPORTER ---------
-	%\section{Packet Capture Importer}
-	%\input{importer.tex}
-	%\newpage
-	
-	% --------- REPORT GENERATOR ---------
-	%\section{Report Generator}
-	%\input{report-generator.tex}
-	%\newpage
 	
 	% --------- TABBY ---------
 	\section{Kernsoftware - Tabby}
